@@ -912,9 +912,9 @@
   class="panel"
   style="position: fixed; top: 60px; left: calc(100% - 440px); width: 410px; height: 90px; z-index:900; text-align: center;"
 >
-  <h4 style="margin: 0; test-align: center">
+  <h1 style="margin: 0; test-align: center">
     Carbon footprint per employee (tons CO2 per employee)
-  </h4>
+  </h1>
   <div id="legendContainer" style="top: 0px" />
 </div>
 
