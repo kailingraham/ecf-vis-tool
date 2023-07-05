@@ -69,7 +69,7 @@
     us = await d3.json(requestURLUS);
 
     const requestURLECF =
-      "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/map_gdf.json";
+      "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/totalECF_demo_tool.json";
     d3.json(requestURLECF).then((data) => {
       processedData = data.features.map((feature) => {
         return {
