@@ -30,12 +30,9 @@
 
   // Initialize filtering terms
   let migBounds = [0, 0.5];
-  // let migLowerBound = 0;
-  // let migUpperBound = 0.5;
-  let incLowerBound = 0;
-  let incUpperBound = 100000;
-  let minLowerBound = 0;
-  let minUpperBound = 100;
+  let incBounds = [0, 85000];
+  let minBounds = [0,100];
+  let ruccBounds = [0,9];
   
 
   let path;
@@ -90,11 +87,12 @@
           mig_percent: feature.properties.MIG_PERCENT,
           inc: feature.properties.INC_IND_TOT,
           min_percent: feature.properties.RACE_PERCENT_MINORITY,
-
+          rucc: +feature.properties.RUCC_2013,
         };
       });
     });
     ecf = await d3.json(requestURLECF);
+    console.log(processedData)
 
     const requestURLUSNAMES =
       "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/paul/my-app/static/uscounties.csv";
@@ -785,11 +783,10 @@
     document.getElementById("county-select").value = "";
 
     // Reset filter variables
-    migBounds = [0,0.5];
-    // migLowerBound = 0;
-    // migUpperBound = 0.5;
-    incLowerBound = 0;
-    incUpperBound = 100000;
+    let migBounds = [0, 0.5];
+    let incBounds = [0, 85000];
+    let minBounds = [0,100];
+    let ruccBounds = [1,9];
   }
 
   /**----------------------------------------------------------------------------------------------------------------
@@ -803,8 +800,7 @@
         value: (d) => d.ECF_log10,
 
         // Identify all filter variables here
-        // mig_percent: (d) => d.mig_percent,
-        filterVars: ['mig_percent', 'inc', 'min_percent'],
+        filterVars: ['mig_percent', 'inc', 'min_percent', 'rucc'],
 
         // scale: d3.scaleLinear,
         domain: [0.253002, 0.946957, 1.303415, 1.574287, 3.306079],
@@ -857,19 +853,22 @@
       const countyMigPercent = chart.mapFilterVars['mig_percent'][chart.Im.get(chart.If[i])];
       const countyInc = chart.mapFilterVars['inc'][chart.Im.get(chart.If[i])];
       const countyMinPercent = chart.mapFilterVars['min_percent'][chart.Im.get(chart.If[i])];
+      const countyRUCC = chart.mapFilterVars['rucc'][chart.Im.get(chart.If[i])];
+      console.log(countyRUCC)
 
       // Put all filter conditions here
       const conditions = [
         countyMigPercent >= migBounds[0],
         countyMigPercent <= migBounds[1],
-        // countyMigPercent >= migLowerBound,
-        // countyMigPercent <= migUpperBound,
 
-        countyInc >= incLowerBound,
-        countyInc <= incUpperBound,
+        countyInc >= incBounds[0],
+        countyInc <= incBounds[1],
 
-        countyMinPercent >= minLowerBound,
-        countyMinPercent <= minUpperBound
+        countyMinPercent >= minBounds[0],
+        countyMinPercent <= minBounds[1],
+
+        countyRUCC >= ruccBounds[0],
+        countyRUCC <= ruccBounds[1]
       ];
       const doNotFilterOut = conditions.every((condition) => condition);
 
@@ -934,8 +933,6 @@
             on:change={(e) => {
               migBounds[0] = e.detail.values[0];
               migBounds[1] = e.detail.values[1];
-              // migLowerBound = e.detail.values[0];
-              // migUpperBound = e.detail.values[1];
             }}
           />
         </div>
@@ -959,8 +956,8 @@
             float
             springValues={{ stiffness: 1, damping: 1 }}
             on:change={(e) => {
-              incLowerBound = e.detail.values[0];
-              incUpperBound = e.detail.values[1];
+              incBounds[0] = e.detail.values[0];
+              incBounds[1] = e.detail.values[1];
             }}
           />
         </div>
@@ -983,8 +980,31 @@
             float
             springValues={{ stiffness: 1, damping: 1 }}
             on:change={(e) => {
-              minLowerBound = e.detail.values[0];
-              minUpperBound = e.detail.values[1];
+              minBounds[0] = e.detail.values[0];
+              minBounds[1] = e.detail.values[1];
+            }}
+          />
+        </div>
+        <h4 style="margin: 0px; text-align: center; font-size: 12px">
+          Population density
+        </h4>
+        <div class="filterSlider">
+          <RangeSlider
+            range
+            values={[1, 9]}
+            min={1}
+            max={9}
+            step={1}
+            pips
+            pipstep={1}
+            first={"label"}
+            last={"label"}
+            formatter={(v) => Math.round(v)}
+            float
+            springValues={{ stiffness: 1, damping: 1 }}
+            on:change={(e) => {
+              ruccBounds[0] = e.detail.values[0];
+              ruccBounds[1] = e.detail.values[1];
             }}
           />
         </div>
