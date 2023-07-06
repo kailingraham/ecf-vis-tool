@@ -92,7 +92,6 @@
       });
     });
     ecf = await d3.json(requestURLECF);
-    console.log(processedData)
 
     const requestURLUSNAMES =
       "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/paul/my-app/static/uscounties.csv";
@@ -854,7 +853,6 @@
       const countyInc = chart.mapFilterVars['inc'][chart.Im.get(chart.If[i])];
       const countyMinPercent = chart.mapFilterVars['min_percent'][chart.Im.get(chart.If[i])];
       const countyRUCC = chart.mapFilterVars['rucc'][chart.Im.get(chart.If[i])];
-      console.log(countyRUCC)
 
       // Put all filter conditions here
       const conditions = [
@@ -881,7 +879,7 @@
 
 <div class="panel" style="width=">
   <div class="box">
-    <h4 style="margin: 0px; text-align: center">Search</h4>
+    <h4 class="margin: 0px; text-align: center">Search</h4>
     <div>
       <label for="state-select">State:</label>
       <select
@@ -986,7 +984,7 @@
           />
         </div>
         <h4 style="margin: 0px; text-align: center; font-size: 12px">
-          Population density
+          Urbanity (1-3 urban, 4-9 rural)
         </h4>
         <div class="filterSlider">
           <RangeSlider
@@ -1073,6 +1071,10 @@
   {/if} -->
 
 <style>
+  .filterSlider {
+    font-size: 10px;
+  }
+
   #chart-container {
     width: 100%;
     height: calc(
@@ -1146,7 +1148,5 @@
     font-family: "Cardo", serif;
   }
 
-  .filterSlider {
-    font-size: 10px;
-  }
+
 </style>
