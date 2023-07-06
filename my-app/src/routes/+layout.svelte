@@ -1,10 +1,10 @@
 <script>
-  import "../app.postcss";
+  import "../app.css";
   import { Modals, closeModal } from "svelte-modals";
 </script>
 
 <nav class="navbar">
-  <h1 class="text-2xl font-serif font-medium">
+  <h1 class="text-2xl font-bold font-default">
     Employment Vulnerability to the Energy Transition (E-VET) tool
   </h1>
 </nav>

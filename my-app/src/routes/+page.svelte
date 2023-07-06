@@ -31,9 +31,8 @@
   // Initialize filtering terms
   let migBounds = [0, 0.5];
   let incBounds = [0, 85000];
-  let minBounds = [0,100];
-  let ruccBounds = [0,9];
-  
+  let minBounds = [0, 100];
+  let ruccBounds = [0, 9];
 
   let path;
   let width;
@@ -82,7 +81,7 @@
           ECF: Math.round(feature.properties.ECF * 100) / 100,
           ECF_log10: Math.round(feature.properties.ECF_log10 * 100) / 100,
           ECF_log10_std: feature.properties.ECF_log10_std,
-          
+
           // Add filter data specifications here
           mig_percent: feature.properties.MIG_PERCENT,
           inc: feature.properties.INC_IND_TOT,
@@ -477,14 +476,15 @@
 
     // Map filter variables here
     const mapFilterVars = filterVars.reduce((result, variable) => {
-      const mappedValues = d3.map(data, (d) => d[variable]).map((d) => (d == null ? NaN : +d));
+      const mappedValues = d3
+        .map(data, (d) => d[variable])
+        .map((d) => (d == null ? NaN : +d));
       result[variable] = mappedValues;
       return result;
     }, {});
 
     // Compute default domains.
     if (domain === undefined) domain = [d3.min(V), d3.mean(V), d3.max(V)];
-    // if (domain === undefined) domain = d3.extent(V);
 
     // Construct scales.
     const color = d3
@@ -606,38 +606,11 @@
       d3.zoomIdentity.translate(offsetX, offsetY).scale(initialScale)
     );
 
-    function handleCountyClick(event, d) {
-      // Set the selectedState and selectedCounty
-      const oldCounty = selectedCounty;
-      const stateFIPS = d.id.slice(0, 2);
-      const selectedStateInfo = states.features.find((d) => d.id === stateFIPS);
-      selectedState = selectedStateInfo.properties.name;
-      const stateFeature = statemap.get(selectedState);
-      selectedCounty = d.properties.name;
-
-      if (oldCounty === selectedCounty) {
-        resetIsolation();
-        showPanel = false;
-      } else {
-        // Isolate county
-        zoomToFeature(stateFeature);
-        isolateFeature(d);
-
-        // Update the dropdowns with the selected state and county
-        document.getElementById("state-select").value = selectedState;
-        document.getElementById("county-select").value = selectedCounty;
-        selectState({ currentTarget: { value: selectedState } });
-
-        // Simulate an event to handle the county selection
-        handleCountySelection({ target: { value: selectedCounty } });
-      }
-    }
-
     // Add the legend SVG to the legendContainer div
     const legendContainer = d3
       .select("#legendContainer")
       .style("position", "relative"); // Set the position to relative
-    const legendWidth = 400;
+    const legendWidth = 300;
     const legendHeight = 60;
     const legendMargin = { top: 20, right: 20, bottom: 20 };
 
@@ -784,8 +757,35 @@
     // Reset filter variables
     let migBounds = [0, 0.5];
     let incBounds = [0, 85000];
-    let minBounds = [0,100];
-    let ruccBounds = [1,9];
+    let minBounds = [0, 100];
+    let ruccBounds = [1, 9];
+  }
+
+  function handleCountyClick(event, d) {
+    // Set the selectedState and selectedCounty
+    const oldCounty = selectedCounty;
+    const stateFIPS = d.id.slice(0, 2);
+    const selectedStateInfo = states.features.find((d) => d.id === stateFIPS);
+    selectedState = selectedStateInfo.properties.name;
+    const stateFeature = statemap.get(selectedState);
+    selectedCounty = d.properties.name;
+
+    if (oldCounty === selectedCounty) {
+      resetIsolation();
+      showPanel = false;
+    } else {
+      // Isolate county
+      zoomToFeature(stateFeature);
+      isolateFeature(d);
+
+      // Update the dropdowns with the selected state and county
+      document.getElementById("state-select").value = selectedState;
+      document.getElementById("county-select").value = selectedCounty;
+      selectState({ currentTarget: { value: selectedState } });
+
+      // Simulate an event to handle the county selection
+      handleCountySelection({ target: { value: selectedCounty } });
+    }
   }
 
   /**----------------------------------------------------------------------------------------------------------------
@@ -799,7 +799,7 @@
         value: (d) => d.ECF_log10,
 
         // Identify all filter variables here
-        filterVars: ['mig_percent', 'inc', 'min_percent', 'rucc'],
+        filterVars: ["mig_percent", "inc", "min_percent", "rucc"],
 
         // scale: d3.scaleLinear,
         domain: [0.253002, 0.946957, 1.303415, 1.574287, 3.306079],
@@ -849,10 +849,12 @@
       const baseColor = d3.color(color(value));
 
       // filter vars here
-      const countyMigPercent = chart.mapFilterVars['mig_percent'][chart.Im.get(chart.If[i])];
-      const countyInc = chart.mapFilterVars['inc'][chart.Im.get(chart.If[i])];
-      const countyMinPercent = chart.mapFilterVars['min_percent'][chart.Im.get(chart.If[i])];
-      const countyRUCC = chart.mapFilterVars['rucc'][chart.Im.get(chart.If[i])];
+      const countyMigPercent =
+        chart.mapFilterVars["mig_percent"][chart.Im.get(chart.If[i])];
+      const countyInc = chart.mapFilterVars["inc"][chart.Im.get(chart.If[i])];
+      const countyMinPercent =
+        chart.mapFilterVars["min_percent"][chart.Im.get(chart.If[i])];
+      const countyRUCC = chart.mapFilterVars["rucc"][chart.Im.get(chart.If[i])];
 
       // Put all filter conditions here
       const conditions = [
@@ -866,7 +868,7 @@
         countyMinPercent <= minBounds[1],
 
         countyRUCC >= ruccBounds[0],
-        countyRUCC <= ruccBounds[1]
+        countyRUCC <= ruccBounds[1],
       ];
       const doNotFilterOut = conditions.every((condition) => condition);
 
@@ -877,13 +879,14 @@
   }
 </script>
 
-<div class="panel" style="width=">
+<div class="panel">
   <div class="box">
-    <h4 class="margin: 0px; text-align: center">Search</h4>
+    <h4 class="text-center font-bold">Search</h4>
     <div>
-      <label for="state-select">State:</label>
+      <label for="state-select" class="text-sm">State:</label>
       <select
         id="state-select"
+        class="text-sm"
         on:change={handleStateSelection}
         on:change={selectState}
       >
@@ -894,8 +897,12 @@
       </select>
     </div>
     <div>
-      <label for="county-select">County:</label>
-      <select id="county-select" on:change={handleCountySelection}>
+      <label for="county-select" class="text-sm">County:</label>
+      <select
+        id="county-select"
+        class="text-sm"
+        on:change={handleCountySelection}
+      >
         <option value="" disabled selected>Select a county</option>
         {#each counties_list as county}
           <option value={county}>{county}</option>
@@ -903,12 +910,22 @@
       </select>
     </div>
   </div>
+  <div class="grid-cols-2">
+    <button
+      class="bg-white hover:bg-blue-700 hover:text-white text-blue-700 border border-blue-500 font-[6px] py-0 px-1 rounded font-default"
+      on:click={redoTutorial}>Start tutorial</button
+    >
+    <button
+      class="bg-blue-500 hover:bg-blue-700 text-white font-[9px] py-0 px-1 rounded font-default"
+      on:click={resetView}>Reset view</button
+    >
+  </div>
 </div>
 
-<div class="panel" style="top: 180px">
-  <Accordion>
+<div class="panel w-[200px]" style="top: 200px">
+  <Accordion class="w-[180px]">
     <AccordionItem>
-      <span slot="header">Filters</span>
+      <span slot="header" class="text-center font-bold">Filters</span>
       <div class="box">
         <h4 style="margin: 0px; text-align: center; font-size: 12px">
           Migrant population share
@@ -934,9 +951,7 @@
             }}
           />
         </div>
-        <h4 style="margin: 0px; text-align: center; font-size: 12px">
-          Median income
-        </h4>
+        <h4 class="m-0 text-center text-xs space-x-0">Median income</h4>
         <div class="filterSlider">
           <RangeSlider
             range
@@ -1012,29 +1027,24 @@
 </div>
 
 <PanelApp {FIPScode} {showPanel} />
-
+<!-- style="position: fixed; top: 60px; left: calc(100% - 440px); width: 410px; height: 90px; z-index:900; text-align: center;" -->
+<!-- style="margin: 0; text-align: center"> -->
+<!-- Legend -->
 <div
-  class="panel"
-  style="position: fixed; top: 60px; left: calc(100% - 440px); width: 410px; height: 90px; z-index:900; text-align: center;"
+  class="panel top-[60px] w-[350px] p-0"
+
+  
 >
-  <h1 style="margin: 0; test-align: center">
-    Carbon footprint per employee (tons CO2 per employee)
+  <h1 
+  class="text-center text-sm font-bold">
+    
+  
+    Employee Carbon Footprint (ECF)<br>(tons CO<sub>2</sub>e per employee)
   </h1>
   <div id="legendContainer" style="top: 0px" />
 </div>
 
-<button
-  on:click={resetView}
-  style="position: absolute; top: 250px; left: 35px; z-index: 999;"
-  >Reset view</button
->
-
 <div id="chart-container" />
-
-<button
-  style="position: absolute; top: 250px; left: 125px; z-index: 999;"
-  on:click={redoTutorial}>Start tutorial</button
->
 
 {#if beginTutorial === true}
   <div class="tutorial">
@@ -1147,6 +1157,4 @@
     border-radius: 4px;
     font-family: "Cardo", serif;
   }
-
-
 </style>
