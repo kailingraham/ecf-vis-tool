@@ -24,12 +24,19 @@
   let counties_list = [];
   let counties_for_zoom;
   let counties_fips;
-  //   let migrantThreshold = 0;
-  let migLowerBound = 0;
-  let migUpperBound = 0.5;
   let color;
   let FIPScode;
   let showPanel = false;
+
+  // Initialize filtering terms
+  let migBounds = [0, 0.5];
+  // let migLowerBound = 0;
+  // let migUpperBound = 0.5;
+  let incLowerBound = 0;
+  let incUpperBound = 100000;
+  let minLowerBound = 0;
+  let minUpperBound = 100;
+  
 
   let path;
   let width;
@@ -78,7 +85,12 @@
           ECF: Math.round(feature.properties.ECF * 100) / 100,
           ECF_log10: Math.round(feature.properties.ECF_log10 * 100) / 100,
           ECF_log10_std: feature.properties.ECF_log10_std,
-          migrant_pop: Math.round(feature.properties.MIG_PERCENT * 100) / 100,
+          
+          // Add filter data specifications here
+          mig_percent: feature.properties.MIG_PERCENT,
+          inc: feature.properties.INC_IND_TOT,
+          min_percent: feature.properties.RACE_PERCENT_MINORITY,
+
         };
       });
     });
@@ -437,7 +449,7 @@
     {
       id = (d) => d.id, // given d in data, returns the feature id
       value = () => undefined, // given d in data, returns the quantitative value
-      mg_pop = (d) => d.migrant_pop,
+      filterVars, // array of all variables within processedData used in the filter sliders
       title, // given a feature f and possibly a datum d, returns the hover text
       format, // optional format specifier for the title
       domain, // [min, max] values; input of color scale
@@ -463,9 +475,15 @@
     // Compute values.
     const N = d3.map(data, id);
     const V = d3.map(data, value).map((d) => (d == null ? NaN : +d));
-    const M = d3.map(data, mg_pop).map((d) => (d == null ? NaN : +d));
     const Im = new d3.InternMap(N.map((id, i) => [id, i]));
     const If = d3.map(features.features, featureId);
+
+    // Map filter variables here
+    const mapFilterVars = filterVars.reduce((result, variable) => {
+      const mappedValues = d3.map(data, (d) => d[variable]).map((d) => (d == null ? NaN : +d));
+      result[variable] = mappedValues;
+      return result;
+    }, {});
 
     // Compute default domains.
     if (domain === undefined) domain = [d3.min(V), d3.mean(V), d3.max(V)];
@@ -540,13 +558,7 @@
       .attr("class", "county")
       .attr("fill", (d, i) => {
         const value = V[Im.get(If[i])];
-        const migrantPercentage = M[Im.get(If[i])];
         const baseColor = d3.color(color(value));
-        return migrantPercentage >= migLowerBound &&
-          migrantPercentage <= migUpperBound
-          ? // return migrantPercentage >= migrantThreshold
-            baseColor
-          : d3.rgb(baseColor.r, baseColor.g, baseColor.b, 0.1);
       })
       .attr("d", path)
       .on("click", handleCountyClick)
@@ -750,7 +762,7 @@
       height,
       g,
       V,
-      M,
+      mapFilterVars,
       Im,
       If,
       svg,
@@ -771,9 +783,13 @@
     resetIsolation();
     document.getElementById("state-select").value = "";
     document.getElementById("county-select").value = "";
-    // migrantThreshold = 0;
-    migLowerBound = 0;
-    migUpperBound = 0.5;
+
+    // Reset filter variables
+    migBounds = [0,0.5];
+    // migLowerBound = 0;
+    // migUpperBound = 0.5;
+    incLowerBound = 0;
+    incUpperBound = 100000;
   }
 
   /**----------------------------------------------------------------------------------------------------------------
@@ -785,7 +801,11 @@
       {
         id: (d) => d.id,
         value: (d) => d.ECF_log10,
-        mg_pop: (d) => d.migrant_pop,
+
+        // Identify all filter variables here
+        // mig_percent: (d) => d.mig_percent,
+        filterVars: ['mig_percent', 'inc', 'min_percent'],
+
         // scale: d3.scaleLinear,
         domain: [0.253002, 0.946957, 1.303415, 1.574287, 3.306079],
         range: ["#006193", "#70a8ca", "#e0e0e0", "#dcab77", "#a12e00"],
@@ -829,15 +849,32 @@
   }
 
   $: if (chart) {
-    // && migrantThreshold !== null && migrantThreshold !== undefined) {
     chart.g.selectAll("path").attr("fill", (d, i) => {
       const value = chart.V[chart.Im.get(chart.If[i])];
-      const migrantPercentage = chart.M[chart.Im.get(chart.If[i])];
       const baseColor = d3.color(color(value));
-      return migrantPercentage >= migLowerBound &&
-        migrantPercentage <= migUpperBound
-        ? //   return migrantPercentage >= migrantThreshold
-          baseColor
+
+      // filter vars here
+      const countyMigPercent = chart.mapFilterVars['mig_percent'][chart.Im.get(chart.If[i])];
+      const countyInc = chart.mapFilterVars['inc'][chart.Im.get(chart.If[i])];
+      const countyMinPercent = chart.mapFilterVars['min_percent'][chart.Im.get(chart.If[i])];
+
+      // Put all filter conditions here
+      const conditions = [
+        countyMigPercent >= migBounds[0],
+        countyMigPercent <= migBounds[1],
+        // countyMigPercent >= migLowerBound,
+        // countyMigPercent <= migUpperBound,
+
+        countyInc >= incLowerBound,
+        countyInc <= incUpperBound,
+
+        countyMinPercent >= minLowerBound,
+        countyMinPercent <= minUpperBound
+      ];
+      const doNotFilterOut = conditions.every((condition) => condition);
+
+      return doNotFilterOut
+        ? baseColor
         : d3.rgb(baseColor.r, baseColor.g, baseColor.b, 0.1);
     });
   }
@@ -869,10 +906,9 @@
       </select>
     </div>
   </div>
-  
 </div>
 
-<div class="panel" style="top: 300px">
+<div class="panel" style="top: 180px">
   <Accordion>
     <AccordionItem>
       <span slot="header">Filters</span>
@@ -896,8 +932,59 @@
             float
             springValues={{ stiffness: 1, damping: 1 }}
             on:change={(e) => {
-              migLowerBound = e.detail.values[0];
-              migUpperBound = e.detail.values[1];
+              migBounds[0] = e.detail.values[0];
+              migBounds[1] = e.detail.values[1];
+              // migLowerBound = e.detail.values[0];
+              // migUpperBound = e.detail.values[1];
+            }}
+          />
+        </div>
+        <h4 style="margin: 0px; text-align: center; font-size: 12px">
+          Median income
+        </h4>
+        <div class="filterSlider">
+          <RangeSlider
+            range
+            values={[15000, 85000]}
+            min={15000}
+            max={85000}
+            step={500}
+            pips
+            pipstep={10}
+            first={"label"}
+            last={"label"}
+            formatter={(v) => Math.round(v / 100) / 10}
+            prefix={"$"}
+            suffix={"k"}
+            float
+            springValues={{ stiffness: 1, damping: 1 }}
+            on:change={(e) => {
+              incLowerBound = e.detail.values[0];
+              incUpperBound = e.detail.values[1];
+            }}
+          />
+        </div>
+        <h4 style="margin: 0px; text-align: center; font-size: 12px">
+          Minority population share
+        </h4>
+        <div class="filterSlider">
+          <RangeSlider
+            range
+            values={[0, 100]}
+            min={0}
+            max={100}
+            step={0.5}
+            pips
+            pipstep={25}
+            first={"label"}
+            last={"label"}
+            formatter={(v) => Math.round(v * 10) / 10}
+            suffix={"%"}
+            float
+            springValues={{ stiffness: 1, damping: 1 }}
+            on:change={(e) => {
+              minLowerBound = e.detail.values[0];
+              minUpperBound = e.detail.values[1];
             }}
           />
         </div>
