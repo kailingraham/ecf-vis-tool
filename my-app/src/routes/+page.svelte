@@ -29,10 +29,15 @@
   let showPanel = false;
 
   // Initialize filtering terms
+  let filterByIra = false;
+  let qualNonqual = false;
   let migBounds = [0, 0.5];
   let incBounds = [0, 85000];
   let minBounds = [0, 100];
   let ruccBounds = [0, 9];
+  let unempBounds = [0, 15.5];
+  let povBounds = [0, 60];
+  let edBounds = [0, 70];
 
   let path;
   let width;
@@ -87,6 +92,10 @@
           inc: feature.properties.INC_IND_TOT,
           min_percent: feature.properties.RACE_PERCENT_MINORITY,
           rucc: +feature.properties.RUCC_2013,
+          ira: feature.properties.ira,
+          unemp: feature.properties.UNEMP_RATE,
+          pov: feature.properties.POV_RATE,
+          ed: feature.properties.ED_PERCENT_TERTIARY,
         };
       });
     });
@@ -755,10 +764,15 @@
     document.getElementById("county-select").value = "";
 
     // Reset filter variables
-    let migBounds = [0, 0.5];
-    let incBounds = [0, 85000];
-    let minBounds = [0, 100];
-    let ruccBounds = [1, 9];
+    filterByIra = false;
+    qualNonqual = false;
+    migBounds = [0, 0.5];
+    incBounds = [0, 85000];
+    minBounds = [0, 100];
+    ruccBounds = [1, 9];
+    unempBounds = [0, 15.5];
+    povBounds = [0, 60];
+    edBounds = [0, 70];
   }
 
   function handleCountyClick(event, d) {
@@ -792,27 +806,32 @@
    * Create choropleth
    * ----------------------------------------------------------------------------------------------------------------*/
   $: if (processedData && statemap && counties && statemesh) {
-    chart = Choropleth(
-      processedData,
-      {
-        id: (d) => d.id,
-        value: (d) => d.ECF_log10,
+    chart = Choropleth(processedData, {
+      id: (d) => d.id,
+      value: (d) => d.ECF_log10,
 
-        // Identify all filter variables here
-        filterVars: ["mig_percent", "inc", "min_percent", "rucc"],
+      // Identify all filter variables here
+      filterVars: [
+        "mig_percent",
+        "inc",
+        "min_percent",
+        "rucc",
+        "ira",
+        "unemp",
+        "pov",
+        "ed",
+      ],
 
-        // scale: d3.scaleLinear,
-        domain: [0.253002, 0.946957, 1.303415, 1.574287, 3.306079],
-        range: ["#006193", "#70a8ca", "#e0e0e0", "#dcab77", "#a12e00"],
-        title: (f, d) =>
-          `${f.properties.name}, ${d?.state} \n ${d?.ECF} tons CO2/employee`,
-        features: counties,
-        borders: statemesh,
-        width: 1400,
-        height: 900,
-      }
-      //selectedState
-    );
+      // scale: d3.scaleLinear,
+      domain: [0.253002, 0.946957, 1.303415, 1.574287, 3.306079],
+      range: ["#006193", "#70a8ca", "#e0e0e0", "#dcab77", "#a12e00"],
+      title: (f, d) =>
+        `${f.properties.name}, ${d?.state} \n ${d?.ECF} tons CO2/employee`,
+      features: counties,
+      borders: statemesh,
+      width: 1400,
+      height: 900,
+    });
   }
 
   $: if (chart) {
@@ -848,13 +867,18 @@
       const value = chart.V[chart.Im.get(chart.If[i])];
       const baseColor = d3.color(color(value));
 
-      // filter vars here
+      // extract filter vars for each county here
       const countyMigPercent =
         chart.mapFilterVars["mig_percent"][chart.Im.get(chart.If[i])];
       const countyInc = chart.mapFilterVars["inc"][chart.Im.get(chart.If[i])];
       const countyMinPercent =
         chart.mapFilterVars["min_percent"][chart.Im.get(chart.If[i])];
       const countyRUCC = chart.mapFilterVars["rucc"][chart.Im.get(chart.If[i])];
+      const countyIra = chart.mapFilterVars["ira"][chart.Im.get(chart.If[i])];
+      const countyUnemp =
+        chart.mapFilterVars["unemp"][chart.Im.get(chart.If[i])];
+      const countyPov = chart.mapFilterVars["pov"][chart.Im.get(chart.If[i])];
+      const countyEd = chart.mapFilterVars["ed"][chart.Im.get(chart.If[i])];
 
       // Put all filter conditions here
       const conditions = [
@@ -869,7 +893,21 @@
 
         countyRUCC >= ruccBounds[0],
         countyRUCC <= ruccBounds[1],
+
+        countyUnemp >= unempBounds[0],
+        countyUnemp <= unempBounds[1],
+
+        countyPov >= povBounds[0],
+        countyPov <= povBounds[1],
+
+        countyEd >= edBounds[0],
+        countyEd <= edBounds[1],
       ];
+
+      if (filterByIra) {
+        conditions.push(countyIra == qualNonqual);
+      }
+
       const doNotFilterOut = conditions.every((condition) => condition);
 
       return doNotFilterOut
@@ -877,63 +915,183 @@
         : d3.rgb(baseColor.r, baseColor.g, baseColor.b, 0.1);
     });
   }
+
+  // console.log(document.getElementById('ira-checkbox').value)
 </script>
 
-<div class="panel">
-  <div class="box">
-    <h4 class="text-center font-bold">Search</h4>
-    <div>
-      <label for="state-select" class="text-sm">State:</label>
-      <select
-        id="state-select"
-        class="text-sm"
-        on:change={handleStateSelection}
-        on:change={selectState}
-      >
-        <option value="" disabled selected>Select a state</option>
-        {#each uniqueStates as state}
-          <option value={state}>{state}</option>
-        {/each}
-      </select>
-    </div>
-    <div>
-      <label for="county-select" class="text-sm">County:</label>
-      <select
-        id="county-select"
-        class="text-sm"
-        on:change={handleCountySelection}
-      >
-        <option value="" disabled selected>Select a county</option>
-        {#each counties_list as county}
-          <option value={county}>{county}</option>
-        {/each}
-      </select>
-    </div>
-  </div>
-  <div class="grid-cols-2">
+<!-- <div class="panel w-[205px]">
+  
+</div> -->
+
+<div
+  class="absolute w-[220px] top-[60px] left-[10px] z-10 bg-gray-100 bg-opacity-[0.675] rounded hover:rounded px-[10px] py-1 font-default"
+>
+  <div class="grid grid-cols-2 pt-1 pb-2 gap-1">
     <button
-      class="bg-white hover:bg-blue-700 hover:text-white text-blue-700 border border-blue-500 font-[6px] py-0 px-1 rounded font-default"
+      class="bg-white hover:bg-blue-700 hover:text-white text-blue-700 border border-blue-500 text-sm py-0 px-1 rounded font-default"
       on:click={redoTutorial}>Start tutorial</button
     >
     <button
-      class="bg-blue-500 hover:bg-blue-700 text-white font-[9px] py-0 px-1 rounded font-default"
+      class="bg-blue-500 hover:bg-blue-700 text-white text-sm py-0 px-1 rounded font-default"
       on:click={resetView}>Reset view</button
     >
   </div>
-</div>
+  <Accordion flush>
+    <AccordionItem open class="py-0 justify-between w-full">
+      <span slot="header" class="py-1 text-center font-bold justify-between"
+        >Search</span
+      >
+      <div class="py-0">
+        <label for="state-select" class="text-sm">State:</label>
+        <select
+          id="state-select"
+          class="text-sm"
+          on:change={handleStateSelection}
+          on:change={selectState}
+        >
+          <option value="" disabled selected>Select a state</option>
+          {#each uniqueStates as state}
+            <option value={state}>{state}</option>
+          {/each}
+        </select>
+      </div>
+      <div class="py-1">
+        <label for="county-select" class="text-sm">County:</label>
+        <select
+          id="county-select"
+          class="text-xs"
+          on:change={handleCountySelection}
+        >
+          <option value="" disabled selected>Select a county</option>
+          {#each counties_list as county}
+            <option value={county}>{county}</option>
+          {/each}
+        </select>
+      </div>
+    </AccordionItem>
 
-<div class="panel w-[200px]" style="top: 200px">
-  <Accordion class="w-[180px]">
-    <AccordionItem>
-      <span slot="header" class="text-center font-bold">Filters</span>
-      <div class="box">
+    <AccordionItem class="py-1 w-full ">
+      <span
+        slot="header"
+        class="text-center font-bold text-black dark:text-gray-300 py-0 justify-between"
+        >IRA Energy Communities</span
+      >
+      <!-- checkbox to filter by IRA or not -->
+      <div class="flex items-center ml-2 p-2">
+        <input
+          id="default-checkbox"
+          type="checkbox"
+          bind:checked={filterByIra}
+          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+        />
+        <label
+          for="default-checkbox"
+          class="ml-2 text-xs font-medium text-gray-900 dark:text-gray-300 text-center"
+          >IRA energy communities</label
+        >
+      </div>
+
+      <!-- toggle for qualifying vs non-qualifying counties, when  checkbox is checked-->
+      <label
+        class="relative inline-flex items-center cursor-pointer pb-5"
+      >
+        <span
+          class="mr-2 text-[10px] font-medium text-gray-900 dark:text-gray-300"
+          style="color: {filterByIra ? 'rgb(17, 24, 39' : 'rgb(156, 163, 175)'}"
+          >Non-qualifying</span
+        >
+        <span class="relative">
+          <input
+            type="checkbox"
+            bind:checked={qualNonqual}
+            disabled={filterByIra == false}
+            class="sr-only peer"
+          />
+          <div
+            class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+          />
+        </span>
+        <span
+          class="ml-3 text-[10px] font-medium text-gray-900 dark:text-gray-300"
+          style="color: {filterByIra ? 'rgb(17, 24, 39' : 'rgb(156, 163, 175)'}"
+          >Qualifying</span
+        >
+      </label>
+    </AccordionItem>
+
+    <AccordionItem class="py-0 m-0 items-center w-full">
+      <span
+        slot="header"
+        class="text-center font-bold text-black dark:text-gray-300 py-1 justify-between"
+        >Demographic Filters</span
+      >
+      <!-- demographic filter variables -->
+      <div class="p-0">
+        <h4 style="margin: 0px; text-align: center; font-size: 12px">
+          Urbanity (1-3 urban, 4-9 rural)
+        </h4>
+        <div class="filterSlider">
+          <RangeSlider
+            range
+            bind:values={ruccBounds}
+            min={1}
+            max={9}
+            step={1}
+            pips
+            pipstep={1}
+            first={"label"}
+            last={"label"}
+            formatter={(v) => Math.round(v)}
+            float
+            springValues={{ stiffness: 1, damping: 1 }}
+          />
+        </div>
+        <h4 class="m-0 text-center text-xs space-x-0">Median income</h4>
+        <div class="filterSlider">
+          <RangeSlider
+            range
+            bind:values={incBounds}
+            min={15000}
+            max={85000}
+            step={500}
+            pips
+            pipstep={20}
+            first={"label"}
+            last={"label"}
+            formatter={(v) => Math.round(v / 100) / 10}
+            prefix={"$"}
+            suffix={"k"}
+            float
+            springValues={{ stiffness: 1, damping: 1 }}
+          />
+        </div>
+        <h4 style="margin: 0px; text-align: center; font-size: 12px">
+          Minority population share
+        </h4>
+        <div class="filterSlider">
+          <RangeSlider
+            range
+            bind:values={minBounds}
+            min={0}
+            max={100}
+            step={0.5}
+            pips
+            pipstep={50}
+            first={"label"}
+            last={"label"}
+            formatter={(v) => Math.round(v * 10) / 10}
+            suffix={"%"}
+            float
+            springValues={{ stiffness: 1, damping: 1 }}
+          />
+        </div>
         <h4 style="margin: 0px; text-align: center; font-size: 12px">
           Migrant population share
         </h4>
         <div class="filterSlider">
           <RangeSlider
             range
-            values={[0, 0.5]}
+            bind:values={migBounds}
             min={0}
             max={0.5}
             step={0.005}
@@ -945,80 +1103,66 @@
             suffix={"%"}
             float
             springValues={{ stiffness: 1, damping: 1 }}
-            on:change={(e) => {
-              migBounds[0] = e.detail.values[0];
-              migBounds[1] = e.detail.values[1];
-            }}
-          />
-        </div>
-        <h4 class="m-0 text-center text-xs space-x-0">Median income</h4>
-        <div class="filterSlider">
-          <RangeSlider
-            range
-            values={[15000, 85000]}
-            min={15000}
-            max={85000}
-            step={500}
-            pips
-            pipstep={10}
-            first={"label"}
-            last={"label"}
-            formatter={(v) => Math.round(v / 100) / 10}
-            prefix={"$"}
-            suffix={"k"}
-            float
-            springValues={{ stiffness: 1, damping: 1 }}
-            on:change={(e) => {
-              incBounds[0] = e.detail.values[0];
-              incBounds[1] = e.detail.values[1];
-            }}
           />
         </div>
         <h4 style="margin: 0px; text-align: center; font-size: 12px">
-          Minority population share
+          Unemployment rate
         </h4>
         <div class="filterSlider">
           <RangeSlider
             range
-            values={[0, 100]}
+            bind:values={unempBounds}
             min={0}
-            max={100}
-            step={0.5}
+            max={15.5}
+            step={0.25}
+            pips
+            pipstep={20}
+            first={"label"}
+            last={"label"}
+            formatter={(v) => Math.round(v * 100) / 100}
+            suffix={"%"}
+            float
+            springValues={{ stiffness: 1, damping: 1 }}
+          />
+        </div>
+        <h4 style="margin: 0px; text-align: center; font-size: 12px">
+          Poverty rate
+        </h4>
+        <div class="filterSlider">
+          <RangeSlider
+            range
+            bind:values={povBounds}
+            min={0}
+            max={60}
+            step={1}
+            pips
+            pipstep={20}
+            first={"label"}
+            last={"label"}
+            formatter={(v) => Math.round(v * 100) / 100}
+            suffix={"%"}
+            float
+            springValues={{ stiffness: 1, damping: 1 }}
+          />
+        </div>
+        <h4 style="margin: 0px; text-align: center; font-size: 12px">
+          Tertiary education attainment
+        </h4>
+        <div class="filterSlider">
+          <RangeSlider
+            range
+            bind:values={edBounds}
+            min={0}
+            max={70}
+            step={1}
             pips
             pipstep={25}
             first={"label"}
             last={"label"}
-            formatter={(v) => Math.round(v * 10) / 10}
+            formatter={(v) => Math.round(v * 100) / 100}
             suffix={"%"}
             float
             springValues={{ stiffness: 1, damping: 1 }}
-            on:change={(e) => {
-              minBounds[0] = e.detail.values[0];
-              minBounds[1] = e.detail.values[1];
-            }}
-          />
-        </div>
-        <h4 style="margin: 0px; text-align: center; font-size: 12px">
-          Urbanity (1-3 urban, 4-9 rural)
-        </h4>
-        <div class="filterSlider">
-          <RangeSlider
-            range
-            values={[1, 9]}
-            min={1}
-            max={9}
-            step={1}
-            pips
-            pipstep={1}
-            first={"label"}
-            last={"label"}
-            formatter={(v) => Math.round(v)}
-            float
-            springValues={{ stiffness: 1, damping: 1 }}
-            on:change={(e) => {
-              ruccBounds[0] = e.detail.values[0];
-              ruccBounds[1] = e.detail.values[1];
-            }}
           />
         </div>
       </div>
@@ -1027,21 +1171,21 @@
 </div>
 
 <PanelApp {FIPScode} {showPanel} />
-<!-- style="position: fixed; top: 60px; left: calc(100% - 440px); width: 410px; height: 90px; z-index:900; text-align: center;" -->
-<!-- style="margin: 0; text-align: center"> -->
-<!-- Legend -->
-<div
-  class="panel top-[60px] w-[350px] p-0"
 
-  
+<!-- style="margin: 0; text-align: center"> -->
+<!-- class="panel top-[60px] w-[350px] p-0" -->
+
+<!-- Legend -->
+
+<!-- style="position: fixed; top: 60px; left: calc(100% - 440px); padding: 0px; z-index:900; text-align: center;" -->
+
+<div
+  class="fixed top-[60px] right-2 bg-gray-100 p-1 font-default z-10 bg-opacity-[0.675] rounded"
 >
-  <h1 
-  class="text-center text-sm font-bold">
-    
-  
-    Employee Carbon Footprint (ECF)<br>(tons CO<sub>2</sub>e per employee)
+  <h1 class="text-center text-sm font-bold space-y-0">
+    Employee Carbon Footprint (ECF)<br />(tons CO<sub>2</sub>e per employee)
   </h1>
-  <div id="legendContainer" style="top: 0px" />
+  <div id="legendContainer" class="top-0 m-0" />
 </div>
 
 <div id="chart-container" />
@@ -1098,7 +1242,7 @@
     position: absolute;
     top: 60px;
     left: 10px;
-    background-color: rgba(245, 245, 245, 0.675);
+    background-color: rgba(244, 244, 245, 0.675);
     border-radius: 5px;
     padding: 10px;
     display: flex;

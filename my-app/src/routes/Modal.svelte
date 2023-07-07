@@ -13,7 +13,7 @@
 </script>
 
 {#if isOpen}
-    {#if step === -1}:
+    {#if step === -1}
         <div role="dialog" class="modal1">
             <div class="contents">
                 <h2>{title}</h2>

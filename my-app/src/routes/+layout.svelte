@@ -4,7 +4,7 @@
 </script>
 
 <nav class="navbar">
-  <h1 class="text-2xl font-bold font-default">
+  <h1 class="text-2xl font-bold font-default text-center">
     Employment Vulnerability to the Energy Transition (E-VET) tool
   </h1>
 </nav>
