@@ -404,7 +404,6 @@
   function isolateFeature(feature) {
     if (feature.id.length === 2) {
       console.log("StateFIPS passed");
-      console.log(chart.g.selectAll("path"));
       chart.g
         .selectAll("path")
         .filter(function (d) {
@@ -445,7 +444,7 @@
       .duration(500)
       .call(
         zoom.transform,
-        d3.zoomIdentity.translate(offsetX, offsetY).scale(initialScale)
+        d3.zoomIdentity.translate(offsetX, 0).scale(initialScale)
       );
   }
 
@@ -473,7 +472,7 @@
       strokeLinejoin = "round", // stroke line join for borders
       strokeWidth, // stroke width for borders
       strokeOpacity, // stroke opacity for borders
-      padding = 150, // padding around the map when fitting the projection
+      padding = 10, // padding around the map when fitting the projection
     } = {}
     //selectedState
   ) {
@@ -516,6 +515,7 @@
     // Compute the default height. If an outline object is specified, scale the projection to fit
     // the width, and then compute the corresponding height.
     if (height === undefined) {
+      console.log("height == undefined");
       if (outline === undefined) {
         height = 400;
       } else {
@@ -531,7 +531,6 @@
 
     // Construct a path generator.
     const path = d3.geoPath(projection);
-
     const svg = d3
       .create("svg")
       .attr("width", width)
@@ -549,14 +548,25 @@
     const g = svg.append("g");
 
     const bounds = path.bounds(features);
-
+    console.log(bounds);
     const scaleX = (width - padding * 2) / (bounds[1][0] - bounds[0][0]);
     const scaleY = (height - padding * 2) / (bounds[1][1] - bounds[0][1]);
-    const initialScale = Math.max(scaleX, scaleY);
+    const initialScale = Math.min(scaleX, scaleY);
 
     const offsetX = (width - initialScale * (bounds[1][0] + bounds[0][0])) / 2;
     const offsetY =
       (height - initialScale * (bounds[1][1] + bounds[0][1])) / 2 - 100;
+
+    console.log(
+      width,
+      height,
+      padding,
+      scaleX,
+      scaleY,
+      initialScale,
+      offsetX,
+      offsetY
+    );
 
     g.selectAll("path")
       .data(features.features)
@@ -612,7 +622,7 @@
 
     svg.call(
       zoom.transform,
-      d3.zoomIdentity.translate(offsetX, offsetY).scale(initialScale)
+      d3.zoomIdentity.translate(offsetX, 0).scale(initialScale)
     );
 
     // Add the legend SVG to the legendContainer div
@@ -757,12 +767,6 @@
 
   // add function that closes the box and resets the zoom and county selection
   function resetView() {
-    setShowPanelFalse();
-    resetZoom();
-    resetIsolation();
-    document.getElementById("state-select").value = "";
-    document.getElementById("county-select").value = "";
-
     // Reset filter variables
     filterByIra = false;
     qualNonqual = false;
@@ -773,6 +777,12 @@
     unempBounds = [0, 15.5];
     povBounds = [0, 60];
     edBounds = [0, 70];
+
+    setShowPanelFalse();
+    resetZoom();
+    resetIsolation();
+    document.getElementById("state-select").value = "";
+    document.getElementById("county-select").value = "";
   }
 
   function handleCountyClick(event, d) {
@@ -805,6 +815,7 @@
   /**----------------------------------------------------------------------------------------------------------------
    * Create choropleth
    * ----------------------------------------------------------------------------------------------------------------*/
+
   $: if (processedData && statemap && counties && statemesh) {
     chart = Choropleth(processedData, {
       id: (d) => d.id,
@@ -829,8 +840,8 @@
         `${f.properties.name}, ${d?.state} \n ${d?.ECF} tons CO2/employee`,
       features: counties,
       borders: statemesh,
-      width: 1400,
-      height: 900,
+      width: window.innerWidth,
+      height: window.innerHeight - 50,
     });
   }
 
@@ -917,11 +928,9 @@
   }
 
   // console.log(document.getElementById('ira-checkbox').value)
-</script>
 
-<!-- <div class="panel w-[205px]">
-  
-</div> -->
+  // console.log(window.innerHeight)
+</script>
 
 <div
   class="absolute w-[220px] top-[60px] left-[10px] z-10 bg-gray-100 bg-opacity-[0.675] rounded hover:rounded px-[10px] py-1 font-default"
@@ -992,9 +1001,7 @@
       </div>
 
       <!-- toggle for qualifying vs non-qualifying counties, when  checkbox is checked-->
-      <label
-        class="relative inline-flex items-center cursor-pointer pb-5"
-      >
+      <label class="relative inline-flex items-center cursor-pointer pb-5">
         <span
           class="mr-2 text-[10px] font-medium text-gray-900 dark:text-gray-300"
           style="color: {filterByIra ? 'rgb(17, 24, 39' : 'rgb(156, 163, 175)'}"
