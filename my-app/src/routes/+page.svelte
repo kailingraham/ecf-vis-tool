@@ -431,10 +431,10 @@
     const bounds = path.bounds(feature);
     const [[x0, y0], [x1, y1]] = bounds;
 
-    const centerX = x0 + 0.15 * (x1 - x0);
+    const centerX = x0 + 0.5 * (x1 - x0);
     const centerY = (y0 + y1) / 2;
 
-    const scale = 0.7 / Math.max((1.5 * (x1 - x0)) / width, (y1 - y0) / height);
+    const scale = 0.6 / Math.max((1.5 * (x1 - x0)) / width, (y1 - y0) / height);
 
     svg
       .transition()
@@ -442,7 +442,7 @@
       .call(
         zoom.transform,
         d3.zoomIdentity
-          .translate(width / 2, (height - 200) / 2)
+          .translate(width / 2, (height) / 2)
           .scale(scale)
           .translate(-centerX, -centerY)
       );
@@ -952,9 +952,9 @@
 </script>
 
 <div
-  class="absolute w-[220px] top-[60px] left-[10px] z-10 bg-gray-100 bg-opacity-[0.675] rounded hover:rounded px-[10px] py-1 font-default"
+  class="absolute w-[220px] top-[60px] left-[10px] z-10 bg-gray-100 bg-opacity-[0.675] rounded hover:rounded px-[10px] py-1 font-default "
 >
-  <div class="grid grid-cols-2 pt-1 pb-2 gap-1">
+  <div class="grid grid-cols-2 pt-1 pb-2 gap-1 ">
     <button
       class="bg-white hover:bg-blue-700 hover:text-white text-blue-700 border border-blue-500 text-sm py-0 px-1 rounded font-default"
       on:click={redoTutorial}>Start tutorial</button
@@ -964,13 +964,13 @@
       on:click={resetView}>Reset view</button
     >
   </div>
-  <Accordion id="accordion" flush>
+  <Accordion id="accordion" class='text-gray-900' flush>
     <AccordionItem
       id="accordion-search"
       bind:open={accordion_items_open[0]}
-      class="py-0 justify-between w-full"
+      class="py-0 justify-between w-full text-gray-900"
     >
-      <span slot="header" class="py-1 text-center font-bold justify-between"
+      <span slot="header" class="py-1 text-center font-bold justify-between "
         >Search</span
       >
       <div class="py-0">
@@ -1018,10 +1018,10 @@
       </div>
     </AccordionItem>
 
-    <AccordionItem bind:open={accordion_items_open[1]} class="py-1 w-full">
+    <AccordionItem bind:open={accordion_items_open[1]} class="py-1 w-full text-gray-900">
       <span
         slot="header"
-        class="text-center font-bold text-black dark:text-gray-300 py-0 justify-between"
+        class="text-center font-bold text-black  justify-between"
         >IRA Energy Communities</span
       >
       <!-- checkbox to filter by IRA or not -->
@@ -1067,7 +1067,7 @@
 
     <AccordionItem
       bind:open={accordion_items_open[2]}
-      class="py-0 m-0 items-center w-full"
+      class="py-0 m-0 items-center w-full text-gray-900"
     >
       <span
         slot="header"
@@ -1219,15 +1219,12 @@
   </Accordion>
 </div>
 
-<PanelApp {FIPScode} {showPanel} />
+<PanelApp {FIPScode} {showPanel} {processedData} />
 
 <!-- style="margin: 0; text-align: center"> -->
 <!-- class="panel top-[60px] w-[350px] p-0" -->
 
 <!-- Legend -->
-
-<!-- style="position: fixed; top: 60px; left: calc(100% - 440px); padding: 0px; z-index:900; text-align: center;" -->
-
 <div
   class="fixed top-[60px] right-2 bg-gray-100 p-1 font-default z-10 bg-opacity-[0.675] rounded"
 >

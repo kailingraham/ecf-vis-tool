@@ -4,7 +4,8 @@
   import EmploymentGraph from "./EmploymentGraph.svelte";
   import EmissionsGraph from "./EmissionsGraph.svelte";
   import ECF_BarGraph from "./ECF_BarGraph.svelte";
-  import { getContext } from "svelte";
+  import { getContext, onMount } from "svelte";
+  import { XCircleIcon } from "svelte-feather-icons";
 
   //load socio-economic data
   let socioeconFile =
@@ -26,6 +27,7 @@
   //port variables
   export let FIPScode;
   export let showPanel;
+  export let processedData;
 
   let resetIsolation = getContext("resetIsolation");
   let setShowPanelFalse = getContext("setShowPanelFalse");
@@ -41,6 +43,8 @@
   let panel_data = [];
   let employment_data = [];
   let ecf_data = [];
+  let countyDataUpdated = [];
+  let dataToFilter;
 
   async function fetchEmissionsData() {
     if (FIPScode) {
@@ -92,33 +96,101 @@
     });
   }
 
+  // onMount(async () => {
+  //   if (FIPScode) {
+  //     countyDataUpdated = processedData
+  //     console.log(countyDataUpdated)
+  //   }
+
+  // });
+
+  async function fetchProcessedData() {
+    dataToFilter = await processedData;
+    // countyDataUpdated = dataToFilter.filter((d) => d.id === FIPScode)[0];
+  }
+
   $: {
     FIPScode, fetchEmissionsData();
     FIPScode, fetchEmploymentData();
     FIPScode, fetchECFData();
     FIPScode, fetchPanelData();
+    // FIPScode, fetchProcessedData();
+    // FIPScode, console.log(countyDataUpdated);
+    // FIPScode, console.log(processedData)
   }
 
   $: {
     countyData = panel_data.filter((d) => d.FIPS === FIPScode);
+    // countyDataUpdated = dataToFilter.filter((d) => d.id === FIPScode)[0];
+  }
+
+  $: {
+    if (showPanel === true) {
+      countyDataUpdated = processedData.filter((d) => d.id === FIPScode)[0];
+      console.log(countyDataUpdated);
+    }
   }
 </script>
 
 {#if showPanel}
-  <Box {showPanel}>
+  <div
+    class="absolute bottom-2 right-2 top-[175px] w-[328px] rounded z-10 bg-gray-100 bg-opacity-[0.675] p-1 font-default"
+  >
+    <div class="w-full justify-between flex">
+      <span class="text-2xl font-bold justify-between">
+        {countyDataUpdated.county}, {countyDataUpdated.state}
+      </span>
+      <button on:click={closeBox}>
+        <XCircleIcon />
+      </button>
+    </div>
+    <div class="text-base">
+      {countyDataUpdated.ECF} tons CO<sub>2</sub>e/employee
+    </div>
+    <div class="text-base">
+      {#if countyDataUpdated.ira === 1}
+        <span class=" text-green-900 font-bold">Does </span>
+      {:else}
+        <span class="text-lg text-red-900 font-bold">Does not</span>
+      {/if}
+      contain an IRA energy community
+    </div>
+    <div class="grid grid-cols-2">
+      <div class="h-10">bar chart</div>
+      <div class="text-xs">
+        Population: <br />
+        Median income: <span class='font-semibold'>${countyDataUpdated.inc}</span><br />
+        Non-white population share: <br />
+        (Black X%, Asian Y%) <br />
+        Hispanic population share: <br />
+        Poverty rate: <span class='font-semibold'>{Math.round(countyDataUpdated.pov * 10) / 10}%</span><br />
+        Unemployment rate: <span class='font-semibold'>{Math.round(countyDataUpdated.unemp * 10) / 10}%</span><br
+        />
+        Tertiary education attainment: <span class='font-semibold'>{Math.round(countyDataUpdated.ed * 10) /
+          10}</span>%<br />
+      </div>
+      <div>01</div>
+      <div>01</div>
+      <div>01</div>
+      <div>01</div>
+      <div>01</div>
+    </div>
+  </div>
+
+  <!-- <Box {showPanel} class='rounded-md'>
     <div class="row">
       <button class="close-button" on:click={closeBox}>
         <span class="icon-cross"> x</span>
       </button>
       <div class="col-md-1">
         {#each countyData as d}
-          <!-- add more county level stats here if you want to -->
+          
           <h1>{d.county}, {d.state}</h1>
         {/each}
       </div>
       <div class="col-md-3">
         {#each countyData as d}
-          <!-- add more county level stats here if you want to -->
+          
           <p>
             There are {Math.round(d.population)} people in this county, of which
             {Math.round(d.mig_pop)} are migrants ({Math.round(
@@ -158,7 +230,7 @@
         </div>
       </div>
     </div>
-  </Box>
+  </Box> -->
 {/if}
 
 <style>
