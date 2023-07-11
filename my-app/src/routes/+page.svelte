@@ -18,6 +18,7 @@
   let svgNode;
   let selectedState = "";
   let selectedCounty = "";
+  let oldCounty = "";
   let stateNames;
   let usnames = [];
   let uniqueStates = [];
@@ -129,6 +130,7 @@
       // If no state is selected, clear the counties dropdown and return
       counties_list = [];
       return;
+      
     }
 
     const data_state = usnames.filter(
@@ -139,6 +141,7 @@
     });
 
     counties_list = data_state.map((row) => row.county);
+    
   }
 
   // modal functions
@@ -235,6 +238,50 @@
     handleClick();
   }
 
+  async function updateCountyDropdown(selectedCounty) {
+    await selectState({ currentTarget: { value: selectedState } })
+    document.getElementById("county-select").value = selectedCounty;
+  }
+
+  function openSearchTray() {
+    accordion_items_open = [true, false, false];
+  }
+
+  async function handleCountyClick(event, d) {
+    // open the search tray in the accordion to ensure that selectedState and selectedCounty fields are accessible
+    await openSearchTray();
+
+    // Set the selectedState and selectedCounty
+    oldCounty = selectedCounty;
+    const stateFIPS = d.id.slice(0, 2);
+    const selectedStateInfo = states.features.find((d) => d.id === stateFIPS);
+    selectedState = selectedStateInfo.properties.name;
+    const stateFeature = statemap.get(selectedState);
+    selectedCounty = d.properties.name;
+
+    console.log("selectedCounty:", selectedCounty);
+    console.log("oldCounty:", oldCounty);
+
+    if (oldCounty === selectedCounty && showPanel === true) {
+      resetIsolation();
+      showPanel = false;
+    } else {
+      // Isolate county
+      zoomToFeature(stateFeature);
+      
+      // Update the dropdowns with the selected state and county
+      document.getElementById("state-select").value = selectedState;
+      updateCountyDropdown(selectedCounty)
+      
+      // Simulate an event to handle the county selection
+      handleCountySelection({ target: { value: selectedCounty } });
+    }
+  }
+
+  $: if (selectedCounty && accordion_items_open[0] === true) {
+
+  }
+
   // selection functions
   function handleStateSelection(event) {
     selectedState = event.target.value;
@@ -253,7 +300,7 @@
 
   function handleCountySelection(event) {
     selectedCounty = event.target.value;
-
+    
     const countyData = usnames.find(
       (row) => row.county === selectedCounty && row.state_name === selectedState
     );
@@ -274,6 +321,7 @@
     resetIsolation();
     isolateFeature(countyFeature);
     showPanel = true;
+    console.log("handleCountySelection called, showPanel set to true")
   }
 
   function handleCountySelection_modal(event) {
@@ -548,7 +596,6 @@
     const g = svg.append("g");
 
     const bounds = path.bounds(features);
-    console.log(bounds);
     const scaleX = (width - padding * 2) / (bounds[1][0] - bounds[0][0]);
     const scaleY = (height - padding * 2) / (bounds[1][1] - bounds[0][1]);
     const initialScale = Math.min(scaleX, scaleY);
@@ -557,16 +604,16 @@
     const offsetY =
       (height - initialScale * (bounds[1][1] + bounds[0][1])) / 2 - 100;
 
-    console.log(
-      width,
-      height,
-      padding,
-      scaleX,
-      scaleY,
-      initialScale,
-      offsetX,
-      offsetY
-    );
+    // console.log(
+    //   width,
+    //   height,
+    //   padding,
+    //   scaleX,
+    //   scaleY,
+    //   initialScale,
+    //   offsetX,
+    //   offsetY
+    // );
 
     g.selectAll("path")
       .data(features.features)
@@ -781,35 +828,8 @@
     setShowPanelFalse();
     resetZoom();
     resetIsolation();
-    document.getElementById("state-select").value = "";
-    document.getElementById("county-select").value = "";
-  }
-
-  function handleCountyClick(event, d) {
-    // Set the selectedState and selectedCounty
-    const oldCounty = selectedCounty;
-    const stateFIPS = d.id.slice(0, 2);
-    const selectedStateInfo = states.features.find((d) => d.id === stateFIPS);
-    selectedState = selectedStateInfo.properties.name;
-    const stateFeature = statemap.get(selectedState);
-    selectedCounty = d.properties.name;
-
-    if (oldCounty === selectedCounty) {
-      resetIsolation();
-      showPanel = false;
-    } else {
-      // Isolate county
-      zoomToFeature(stateFeature);
-      isolateFeature(d);
-
-      // Update the dropdowns with the selected state and county
-      document.getElementById("state-select").value = selectedState;
-      document.getElementById("county-select").value = selectedCounty;
-      selectState({ currentTarget: { value: selectedState } });
-
-      // Simulate an event to handle the county selection
-      handleCountySelection({ target: { value: selectedCounty } });
-    }
+    selectedState = ""
+    selectedCounty = ""
   }
 
   /**----------------------------------------------------------------------------------------------------------------
@@ -927,9 +947,8 @@
     });
   }
 
-  // console.log(document.getElementById('ira-checkbox').value)
-
-  // console.log(window.innerHeight)
+  // create an array that contains a boolean for each Accordion Item that indicates whether it should be opened or closed. Will bind this to each AccordionItem in HTML
+  let accordion_items_open = [true, false, false];
 </script>
 
 <div
@@ -945,8 +964,12 @@
       on:click={resetView}>Reset view</button
     >
   </div>
-  <Accordion flush>
-    <AccordionItem open class="py-0 justify-between w-full">
+  <Accordion id="accordion" flush>
+    <AccordionItem
+      id="accordion-search"
+      bind:open={accordion_items_open[0]}
+      class="py-0 justify-between w-full"
+    >
       <span slot="header" class="py-1 text-center font-bold justify-between"
         >Search</span
       >
@@ -958,9 +981,17 @@
           on:change={handleStateSelection}
           on:change={selectState}
         >
-          <option value="" disabled selected>Select a state</option>
+          {#if selectedState === ""}
+            <option value="" disabled selected>Select a state</option>
+          {:else}
+          <option value="" disabled>Select a state</option>
+          {/if}
           {#each uniqueStates as state}
-            <option value={state}>{state}</option>
+            {#if state === selectedState}
+              <option value={state} selected>{state}</option>
+            {:else}
+              <option value={state}>{state}</option>
+            {/if}
           {/each}
         </select>
       </div>
@@ -971,15 +1002,23 @@
           class="text-xs"
           on:change={handleCountySelection}
         >
-          <option value="" disabled selected>Select a county</option>
+          {#if selectedCounty === ""}
+            <option value="" disabled selected>Select a county</option>
+          {:else}
+            <option value="" disabled>Select a county</option>
+          {/if}
           {#each counties_list as county}
-            <option value={county}>{county}</option>
+            {#if county === selectedCounty}
+              <option value={county} selected>{county}</option>
+            {:else}
+              <option value={county}>{county}</option>
+            {/if}
           {/each}
         </select>
       </div>
     </AccordionItem>
 
-    <AccordionItem class="py-1 w-full ">
+    <AccordionItem bind:open={accordion_items_open[1]} class="py-1 w-full">
       <span
         slot="header"
         class="text-center font-bold text-black dark:text-gray-300 py-0 justify-between"
@@ -1026,7 +1065,10 @@
       </label>
     </AccordionItem>
 
-    <AccordionItem class="py-0 m-0 items-center w-full">
+    <AccordionItem
+      bind:open={accordion_items_open[2]}
+      class="py-0 m-0 items-center w-full"
+    >
       <span
         slot="header"
         class="text-center font-bold text-black dark:text-gray-300 py-1 justify-between"
