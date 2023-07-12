@@ -5,9 +5,9 @@
   export let ecf_data;
 
   let width = 180;
-  let height = 120;
+  let height = 130;
 
-  const margin = { top: 3, right: 0, bottom: 15, left: 35 };
+  const margin = { top: 0, right: 0, bottom: 15, left: 35 };
   const innerHeight = height - margin.top - margin.bottom;
   const innerWidth = width - margin.left - margin.right;
 
@@ -37,7 +37,6 @@
 </script>
 
 <div class="visualization">
-  <div class='font-bold text-xs w-full text-center pl-4'>ECF Comparison</div>
   <svg {width} {height}>
     <g transform={`translate(${margin.left},${margin.top})`}>
       <!-- add x-axis and tick marks to ECF axis -->

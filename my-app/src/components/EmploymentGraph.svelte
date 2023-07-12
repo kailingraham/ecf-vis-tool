@@ -20,7 +20,7 @@
 
   const arc_color = d3
     .scaleOrdinal()
-    .range(d3.schemePastel2)
+    .range(d3.schemeSet2)
     .domain([0, 1, 2, 3, 4, 5, 6, 7]);
 
   let hovered = -1;
@@ -31,70 +31,24 @@
   };
 </script>
 
-<div class="visualization">
-  <h3>By Employment</h3>
-  <svg width="200" height="200">
-    <g transform="translate(65, 50)">
-      <!-- Place for Pie -->
-      <!-- {arc_data} -->
-      {#each arc_data as data, index}
-        <!-- <path
-					d={arcGenerator({
-						startAngle: data.startAngle,
-						endAngle: data.endAngle,
-					})}
-					fill={index === hovered
-						? "black"
-						: arc_color(data.data.industry)}
-					on:mouseover={(event) => {
-						hovered = index;
-						recorded_mouse_position = {
-							x: event.pageX,
-							y: event.pageY,
-						};
-					}}
-					on:mouseout={(event) => {
-						hovered = -1;
-					}}
-				/> -->
-
-        <path
-          d={arcGenerator({
-            startAngle: data.startAngle,
-            endAngle: data.endAngle,
-          })}
-          fill={arc_color(data.data.industry)}
-        />
-      {/each}
-    </g>
-  </svg>
-
-  <div
-    class={hovered === -1 ? "tooltip-hidden" : "tooltip-visible"}
-    style="left: {recorded_mouse_position.x -
-      5}px; bottom: {recorded_mouse_position.y - 400}px"
-  >
-    {#if hovered !== -1}
-      <!-- You're hovering! -->
-      {arc_data[hovered].data.industry}
-    {/if}
-  </div>
-</div>
-
-<div class="legend-container">
-  {#each arc_data as data, index}
-    <div class="legend-item">
-      <div
-        class="legend-color"
-        style="background-color: {arc_color(data.data.industry)}"
+<svg width="100" height="100">
+  <g transform="translate(50, 50)">
+    <!-- Place for Pie -->
+    <!-- {arc_data} -->
+    {#each arc_data as data, index}
+      <path
+        d={arcGenerator({
+          startAngle: data.startAngle,
+          endAngle: data.endAngle,
+        })}
+        fill={arc_color(data.data.industry)}
       />
-      <span class="legend-label">{arc_data[index].data.industry}</span>
-    </div>
-  {/each}
-</div>
+    {/each}
+  </g>
+</svg>
 
 <style>
-  .visualization {
+  /* .visualization {
     width: 200px;
     margin: 0px;
     margin-top: -20px;
@@ -102,8 +56,8 @@
     text-align: middle;
     height: 10px;
     /* position: relative; */
-    /* padding-bottom: 50%; */
-  }
+  /* padding-bottom: 50%; */
+  /* } */
 
   /* dynamic classes for the tooltip */
   .tooltip-hidden {

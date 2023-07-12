@@ -98,7 +98,6 @@
           pov: feature.properties.POV_RATE,
           ed: feature.properties.ED_PERCENT_TERTIARY,
           pop: feature.properties.POP,
-          nonwhite: feature.properties.RACE_NONWHITE_PERCENT,
           hisp: feature.properties.ETHN_LATIN_PERCENT,
           top_race: feature.properties.top_race,
           top_race_percent: feature.properties.top_race_percent,
@@ -112,7 +111,7 @@
     const requestURLUSNAMES =
       "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/paul/my-app/static/uscounties.csv";
     usnames = await d3.csv(requestURLUSNAMES);
-    console.log(usnames)
+    console.log(usnames);
 
     counties = topojson.feature(us, us.objects.counties);
     counties_for_zoom = new Map(
@@ -138,7 +137,6 @@
       // If no state is selected, clear the counties dropdown and return
       counties_list = [];
       return;
-      
     }
 
     const data_state = usnames.filter(
@@ -149,7 +147,6 @@
     });
 
     counties_list = data_state.map((row) => row.county);
-    
   }
 
   // modal functions
@@ -247,7 +244,7 @@
   }
 
   async function updateCountyDropdown(selectedCounty) {
-    await selectState({ currentTarget: { value: selectedState } })
+    await selectState({ currentTarget: { value: selectedState } });
     document.getElementById("county-select").value = selectedCounty;
   }
 
@@ -267,27 +264,23 @@
     const stateFeature = statemap.get(selectedState);
     selectedCounty = d.properties.name;
 
-    console.log("selectedCounty:", selectedCounty);
-    console.log("oldCounty:", oldCounty);
-
     if (oldCounty === selectedCounty && showPanel === true) {
       resetIsolation();
       showPanel = false;
     } else {
       // Isolate county
       zoomToFeature(stateFeature);
-      
+
       // Update the dropdowns with the selected state and county
       document.getElementById("state-select").value = selectedState;
-      updateCountyDropdown(selectedCounty)
-      
+      updateCountyDropdown(selectedCounty);
+
       // Simulate an event to handle the county selection
       handleCountySelection({ target: { value: selectedCounty } });
     }
   }
 
   $: if (selectedCounty && accordion_items_open[0] === true) {
-
   }
 
   // selection functions
@@ -308,7 +301,7 @@
 
   function handleCountySelection(event) {
     selectedCounty = event.target.value;
-    
+
     const countyData = usnames.find(
       (row) => row.county === selectedCounty && row.state_name === selectedState
     );
@@ -329,7 +322,6 @@
     resetIsolation();
     isolateFeature(countyFeature);
     showPanel = true;
-    console.log("handleCountySelection called, showPanel set to true")
   }
 
   function handleCountySelection_modal(event) {
@@ -358,8 +350,6 @@
       isolateFeature(countyFeature);
     } else {
       if (step === 1) {
-        console.log("zoom to county");
-
         selectedCounty = "Wetzel";
         selectedState = "West Virginia";
 
@@ -384,8 +374,6 @@
         // document.getElementById("county-select").value = selectedCounty;
       }
       if (step === 2) {
-        console.log("zoom to county");
-
         selectedCounty = "Kings";
         selectedState = "New York";
 
@@ -409,8 +397,6 @@
       }
 
       if (step === 3) {
-        console.log("zoom to county");
-
         selectedCounty = "Gaines";
         selectedState = "Texas";
 
@@ -439,7 +425,7 @@
     const bounds = path.bounds(feature);
     const [[x0, y0], [x1, y1]] = bounds;
 
-    const centerX = x0 + 0.5 * (x1 - x0);
+    const centerX = x0 + 0.6 * (x1 - x0);
     const centerY = (y0 + y1) / 2;
 
     const scale = 0.6 / Math.max((1.5 * (x1 - x0)) / width, (y1 - y0) / height);
@@ -450,7 +436,7 @@
       .call(
         zoom.transform,
         d3.zoomIdentity
-          .translate(width / 2, (height) / 2)
+          .translate(width / 2, height / 2)
           .scale(scale)
           .translate(-centerX, -centerY)
       );
@@ -459,7 +445,6 @@
   // isolate counties/states by reducing opacity of non-selected counties/states
   function isolateFeature(feature) {
     if (feature.id.length === 2) {
-      console.log("StateFIPS passed");
       chart.g
         .selectAll("path")
         .filter(function (d) {
@@ -485,9 +470,7 @@
           return d === feature;
         })
         .attr("stroke-opacity", 1)
-        .attr("stroke", "black")
-        
-
+        .attr("stroke", "black");
     }
   }
 
@@ -573,7 +556,6 @@
     // Compute the default height. If an outline object is specified, scale the projection to fit
     // the width, and then compute the corresponding height.
     if (height === undefined) {
-      console.log("height == undefined");
       if (outline === undefined) {
         height = 400;
       } else {
@@ -613,17 +595,6 @@
     const offsetX = (width - initialScale * (bounds[1][0] + bounds[0][0])) / 2;
     const offsetY =
       (height - initialScale * (bounds[1][1] + bounds[0][1])) / 2 - 100;
-
-    // console.log(
-    //   width,
-    //   height,
-    //   padding,
-    //   scaleX,
-    //   scaleY,
-    //   initialScale,
-    //   offsetX,
-    //   offsetY
-    // );
 
     g.selectAll("path")
       .data(features.features)
@@ -838,8 +809,8 @@
     setShowPanelFalse();
     resetZoom();
     resetIsolation();
-    selectedState = ""
-    selectedCounty = ""
+    selectedState = "";
+    selectedCounty = "";
   }
 
   /**----------------------------------------------------------------------------------------------------------------
@@ -861,13 +832,12 @@
         "unemp",
         "pov",
         "ed",
-        'pop',
-        'nonwhite',
-        'hisp',
-        'top_race',
-        'top_race_percent',
-        'next_top_race',
-        'next_top_race_percent'
+        "pop",
+        "hisp",
+        "top_race",
+        "top_race_percent",
+        "next_top_race",
+        "next_top_race_percent",
       ],
 
       // scale: d3.scaleLinear,
@@ -969,9 +939,9 @@
 </script>
 
 <div
-  class="absolute w-[220px] top-[60px] left-[10px] z-10 bg-gray-100 bg-opacity-[0.675] rounded hover:rounded px-[10px] py-1 font-default "
+  class="absolute w-[220px] top-[60px] left-[10px] z-10 bg-gray-100 bg-opacity-[0.675] rounded hover:rounded px-[10px] py-1 font-default"
 >
-  <div class="grid grid-cols-2 pt-1 pb-2 gap-1 ">
+  <div class="grid grid-cols-2 pt-1 pb-2 gap-1">
     <button
       class="bg-white hover:bg-blue-700 hover:text-white text-blue-700 border border-blue-500 text-sm py-0 px-1 rounded font-default"
       on:click={redoTutorial}>Start tutorial</button
@@ -981,13 +951,13 @@
       on:click={resetView}>Reset view</button
     >
   </div>
-  <Accordion id="accordion" class='text-gray-900' flush>
+  <Accordion id="accordion" class="text-gray-900" flush>
     <AccordionItem
       id="accordion-search"
       bind:open={accordion_items_open[0]}
       class="py-0 justify-between w-full text-gray-900"
     >
-      <span slot="header" class="py-1 text-center font-bold justify-between "
+      <span slot="header" class="py-1 text-center font-bold justify-between"
         >Search</span
       >
       <div class="py-0">
@@ -1001,7 +971,7 @@
           {#if selectedState === ""}
             <option value="" disabled selected>Select a state</option>
           {:else}
-          <option value="" disabled>Select a state</option>
+            <option value="" disabled>Select a state</option>
           {/if}
           {#each uniqueStates as state}
             {#if state === selectedState}
@@ -1035,10 +1005,13 @@
       </div>
     </AccordionItem>
 
-    <AccordionItem bind:open={accordion_items_open[1]} class="py-1 w-full text-gray-900">
+    <AccordionItem
+      bind:open={accordion_items_open[1]}
+      class="py-1 w-full text-gray-900"
+    >
       <span
         slot="header"
-        class="text-center font-bold text-black  justify-between"
+        class="text-center font-bold text-black justify-between"
         >IRA Energy Communities</span
       >
       <!-- checkbox to filter by IRA or not -->
@@ -1236,7 +1209,7 @@
   </Accordion>
 </div>
 
-<PanelApp {FIPScode} {showPanel} {processedData} {color}/>
+<PanelApp {FIPScode} {showPanel} {processedData} {color} />
 
 <!-- style="margin: 0; text-align: center"> -->
 <!-- class="panel top-[60px] w-[350px] p-0" -->

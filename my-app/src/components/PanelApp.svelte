@@ -129,10 +129,22 @@
     if (showPanel === true) {
       countyNameData = panel_data.filter((d) => d.FIPS === FIPScode)[0];
       countyOtherData = processedData.filter((d) => d.id === FIPScode)[0];
-      console.log(countyNameData);
     }
   }
 
+  let pieAngleGenerator = d3.pie().value((d) => d.employment_pct);
+
+  let arc_data = pieAngleGenerator(employment_data);
+
+  $: {
+    arc_data = pieAngleGenerator(employment_data);
+    console.log(arc_data);
+  }
+
+  const arc_color = d3
+    .scaleOrdinal()
+    .range(d3.schemeSet2)
+    .domain([0, 1, 2, 3, 4, 5, 6, 7]);
 </script>
 
 {#if showPanel}
@@ -141,11 +153,12 @@
   >
     <div class="w-full justify-between flex pt-1 px-1">
       <span class="text-2xl font-bold justify-between">
-        {countyNameData.county}, {countyNameData.state} <span class='font-normal text-sm'>
+        {countyNameData.county}, {countyNameData.state}
+        <span class="font-normal text-sm">
           (FIPS: {FIPScode})
         </span>
       </span>
-      
+
       <button on:click={closeBox}>
         <XCircleIcon />
       </button>
@@ -161,31 +174,96 @@
       {/if}
       contain an IRA energy community
     </div>
+
     <div class="grid grid-cols-2">
-      
-      <div class="text-xs p-1">
-        Population: <span class='font-semibold'>{(countyOtherData.pop).toLocaleString('en')}</span><br />
-        Median income: <span class='font-semibold'>${(countyOtherData.inc).toLocaleString('en')}</span><br />
-        Non-white population share: <span class='font-semibold'>{Math.round(countyOtherData.nonwhite * 10) / 10}%</span><br />
-        ({countyOtherData.top_race}: {Math.round(countyOtherData.top_race_percent * 10) / 10}%, 
-        {countyOtherData.next_top_race}: {Math.round(countyOtherData.next_top_race_percent * 10) / 10}%) <br />
-        Hispanic population share: <span class='font-semibold'>{Math.round(countyOtherData.hisp * 10) / 10}%</span><br />
-        Poverty rate: <span class='font-semibold'>{Math.round(countyOtherData.pov * 10) / 10}%</span><br />
-        Unemployment rate: <span class='font-semibold'>{Math.round(countyOtherData.unemp * 10) / 10}%</span><br
-        />
-        Tertiary education attainment: <span class='font-semibold'>{Math.round(countyOtherData.ed * 10) /
-          10}</span>%<br />
-      </div>
-      <div class="flex px-2 p-1"><ECF_BarGraph bind:ecf_data /></div>
+      <!-- stats -->
       <div>
-        Employment by sector
+        <div class="w-full font-bold text-center">Socioeconomic data</div>
+        <div class="text-xs p-1">
+          Population: <span class="font-semibold"
+            >{countyOtherData.pop.toLocaleString("en")}</span
+          ><br />
+          Median income:
+          <span class="font-semibold"
+            >${countyOtherData.inc.toLocaleString("en")}</span
+          ><br />
+          Minority population share:
+          <span class="font-semibold"
+            >{Math.round(countyOtherData.min_percent * 10) / 10}%</span
+          ><br />
+          ({countyOtherData.top_race}: {Math.round(
+            countyOtherData.top_race_percent * 10
+          ) / 10}%,
+          {countyOtherData.next_top_race}: {Math.round(
+            countyOtherData.next_top_race_percent * 10
+          ) / 10}%) <br />
+          Hispanic population share:
+          <span class="font-semibold"
+            >{Math.round(countyOtherData.hisp * 10) / 10}%</span
+          ><br />
+          Poverty rate:
+          <span class="font-semibold"
+            >{Math.round(countyOtherData.pov * 10) / 10}%</span
+          ><br />
+          Unemployment rate:
+          <span class="font-semibold"
+            >{Math.round(countyOtherData.unemp * 10) / 10}%</span
+          ><br />
+          Tertiary education attainment:
+          <span class="font-semibold"
+            >{Math.round(countyOtherData.ed * 10) / 10}</span
+          >%<br />
+        </div>
       </div>
-      <div>Emissions by sector</div>
-      <div>01</div>
-      <div>01</div>
-      <div>01</div>
+      <!-- ECF bar chart -->
+      <div>
+        <div class="w-full font-bold text-center">ECF Comparison</div>
+        <div class="flex px-2 p-1"><ECF_BarGraph bind:ecf_data /></div>
+      </div>
+      <!-- employment and emissions by sector -->
+      <div class="p-1">
+        <div class="w-full font-bold text-center">Employment by sector</div>
+        <div class="flex justify-center p-2">
+          <EmploymentGraph bind:employment_data />
+        </div>
+      </div>
+      <div class="p-1">
+        <div class="w-full font-bold text-center">Emissions by sector</div>
+        <div class="flex justify-center p-2">
+          {#await fetchEmissionsData() then}
+            <EmissionsGraph bind:emissions_data />
+          {/await}
+        </div>
+      </div>
+    </div>
+
+    <!-- legend -->
+    <div class="grid grid-cols-4 flex items-center text-xs">
+      {#each arc_data as data, index}
+        <div class="flex">
+          <div
+            class="w-3 h-3 m-1"
+            style="background-color: {arc_color(data.data.industry)}"
+          />
+          <span class="pt-1">{arc_data[index].data.industry}</span>
+        </div>
+      {/each}
     </div>
   </div>
+
+  <!-- <div>
+    <div class="grid grid-cols-3 flex items-center mb-2">
+      {#each arc_data as data, index}
+        <div class='flex'>
+          <div
+            class="w-5 h-5 m-1"
+            style="background-color: {arc_color(data.data.industry)}"
+          />
+          <span>{arc_data[index].data.industry}</span>
+        </div>
+      {/each}
+    </div>
+  </div> -->
 
   <!-- <Box {showPanel} class='rounded-md'>
     <div class="row">
