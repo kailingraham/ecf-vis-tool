@@ -97,6 +97,9 @@
           unemp: feature.properties.UNEMP_RATE,
           pov: feature.properties.POV_RATE,
           ed: feature.properties.ED_PERCENT_TERTIARY,
+          pop: feature.properties.POP,
+          nonwhite: feature.properties.RACE_NONWHITE_PERCENT,
+          hisp: feature.properties.ETHN_LATIN_PERCENT,
         };
       });
     });
@@ -854,6 +857,9 @@
         "unemp",
         "pov",
         "ed",
+        'pop',
+        'nonwhite',
+        'hisp'
       ],
 
       // scale: d3.scaleLinear,

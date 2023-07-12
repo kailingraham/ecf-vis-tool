@@ -164,11 +164,11 @@
     <div class="grid grid-cols-2">
       
       <div class="text-xs p-1">
-        Population: <br />
-        Median income: <span class='font-semibold'>${countyOtherData.inc}</span><br />
-        Non-white population share: <br />
+        Population: <span class='font-semibold'>{(countyOtherData.pop).toLocaleString('en')}</span><br />
+        Median income: <span class='font-semibold'>${(countyOtherData.inc).toLocaleString('en')}</span><br />
+        Non-white population share: <span class='font-semibold'>{Math.round(countyOtherData.nonwhite * 10) / 10}%</span><br />
         (Black X%, Asian Y%) <br />
-        Hispanic population share: <br />
+        Hispanic population share: <span class='font-semibold'>{Math.round(countyOtherData.hips * 10) / 10}%</span><br />
         Poverty rate: <span class='font-semibold'>{Math.round(countyOtherData.pov * 10) / 10}%</span><br />
         Unemployment rate: <span class='font-semibold'>{Math.round(countyOtherData.unemp * 10) / 10}%</span><br
         />
