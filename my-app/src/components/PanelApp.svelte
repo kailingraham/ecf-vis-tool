@@ -168,7 +168,7 @@
         Median income: <span class='font-semibold'>${(countyOtherData.inc).toLocaleString('en')}</span><br />
         Non-white population share: <span class='font-semibold'>{Math.round(countyOtherData.nonwhite * 10) / 10}%</span><br />
         (Black X%, Asian Y%) <br />
-        Hispanic population share: <span class='font-semibold'>{Math.round(countyOtherData.hips * 10) / 10}%</span><br />
+        Hispanic population share: <span class='font-semibold'>{Math.round(countyOtherData.hisp * 10) / 10}%</span><br />
         Poverty rate: <span class='font-semibold'>{Math.round(countyOtherData.pov * 10) / 10}%</span><br />
         Unemployment rate: <span class='font-semibold'>{Math.round(countyOtherData.unemp * 10) / 10}%</span><br
         />
@@ -177,9 +177,9 @@
       </div>
       <div class="flex px-2 p-1"><ECF_BarGraph bind:ecf_data /></div>
       <div>
-        01
+        Employment by sector
       </div>
-      <div>01</div>
+      <div>Emissions by sector</div>
       <div>01</div>
       <div>01</div>
       <div>01</div>
