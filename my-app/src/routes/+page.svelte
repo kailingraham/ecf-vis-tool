@@ -100,6 +100,10 @@
           pop: feature.properties.POP,
           nonwhite: feature.properties.RACE_NONWHITE_PERCENT,
           hisp: feature.properties.ETHN_LATIN_PERCENT,
+          top_race: feature.properties.top_race,
+          top_race_percent: feature.properties.top_race_percent,
+          next_top_race: feature.properties.next_top_race,
+          next_top_race_percent: feature.properties.next_top_race_percent,
         };
       });
     });
@@ -859,7 +863,11 @@
         "ed",
         'pop',
         'nonwhite',
-        'hisp'
+        'hisp',
+        'top_race',
+        'top_race_percent',
+        'next_top_race',
+        'next_top_race_percent'
       ],
 
       // scale: d3.scaleLinear,

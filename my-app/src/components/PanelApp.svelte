@@ -167,7 +167,8 @@
         Population: <span class='font-semibold'>{(countyOtherData.pop).toLocaleString('en')}</span><br />
         Median income: <span class='font-semibold'>${(countyOtherData.inc).toLocaleString('en')}</span><br />
         Non-white population share: <span class='font-semibold'>{Math.round(countyOtherData.nonwhite * 10) / 10}%</span><br />
-        (Black X%, Asian Y%) <br />
+        ({countyOtherData.top_race}: {Math.round(countyOtherData.top_race_percent * 10) / 10}%, 
+        {countyOtherData.next_top_race}: {Math.round(countyOtherData.next_top_race_percent * 10) / 10}%) <br />
         Hispanic population share: <span class='font-semibold'>{Math.round(countyOtherData.hisp * 10) / 10}%</span><br />
         Poverty rate: <span class='font-semibold'>{Math.round(countyOtherData.pov * 10) / 10}%</span><br />
         Unemployment rate: <span class='font-semibold'>{Math.round(countyOtherData.unemp * 10) / 10}%</span><br
