@@ -28,6 +28,7 @@
   export let FIPScode;
   export let showPanel;
   export let processedData;
+  export let color;
 
   let resetIsolation = getContext("resetIsolation");
   let setShowPanelFalse = getContext("setShowPanelFalse");
@@ -38,12 +39,12 @@
   }
 
   //set stats you want to show
-  let countyData = [];
+  let countyNameData = [];
   let emissions_data = [];
   let panel_data = [];
   let employment_data = [];
   let ecf_data = [];
-  let countyDataUpdated = [];
+  let countyOtherData = [];
   let dataToFilter;
 
   async function fetchEmissionsData() {
@@ -98,15 +99,15 @@
 
   // onMount(async () => {
   //   if (FIPScode) {
-  //     countyDataUpdated = processedData
-  //     console.log(countyDataUpdated)
+  //     countyOtherData = processedData
+  //     console.log(countyOtherData)
   //   }
 
   // });
 
   async function fetchProcessedData() {
     dataToFilter = await processedData;
-    // countyDataUpdated = dataToFilter.filter((d) => d.id === FIPScode)[0];
+    // countyOtherData = dataToFilter.filter((d) => d.id === FIPScode)[0];
   }
 
   $: {
@@ -115,40 +116,45 @@
     FIPScode, fetchECFData();
     FIPScode, fetchPanelData();
     // FIPScode, fetchProcessedData();
-    // FIPScode, console.log(countyDataUpdated);
+    // FIPScode, console.log(countyOtherData);
     // FIPScode, console.log(processedData)
   }
 
   $: {
-    countyData = panel_data.filter((d) => d.FIPS === FIPScode);
-    // countyDataUpdated = dataToFilter.filter((d) => d.id === FIPScode)[0];
+    countyNameData = panel_data.filter((d) => d.FIPS === FIPScode);
+    // countyOtherData = dataToFilter.filter((d) => d.id === FIPScode)[0];
   }
 
   $: {
     if (showPanel === true) {
-      countyDataUpdated = processedData.filter((d) => d.id === FIPScode)[0];
-      console.log(countyDataUpdated);
+      countyNameData = panel_data.filter((d) => d.FIPS === FIPScode)[0];
+      countyOtherData = processedData.filter((d) => d.id === FIPScode)[0];
+      console.log(countyNameData);
     }
   }
+
 </script>
 
 {#if showPanel}
   <div
-    class="absolute bottom-2 right-2 top-[175px] w-[328px] rounded z-10 bg-gray-100 bg-opacity-[0.675] p-1 font-default"
+    class="absolute bottom-2 right-2 top-[175px] w-[420px] rounded z-10 bg-gray-100 bg-opacity-[0.675] p-2 font-default"
   >
-    <div class="w-full justify-between flex">
+    <div class="w-full justify-between flex pt-1 px-1">
       <span class="text-2xl font-bold justify-between">
-        {countyDataUpdated.county}, {countyDataUpdated.state}
+        {countyNameData.county}, {countyNameData.state} <span class='font-normal text-sm'>
+          (FIPS: {FIPScode})
+        </span>
       </span>
+      
       <button on:click={closeBox}>
         <XCircleIcon />
       </button>
     </div>
-    <div class="text-base">
-      {countyDataUpdated.ECF} tons CO<sub>2</sub>e/employee
+    <div class="text-base pb-1 px-1">
+      {countyOtherData.ECF} tons CO<sub>2</sub>e/employee
     </div>
-    <div class="text-base">
-      {#if countyDataUpdated.ira === 1}
+    <div class="text-base p-1">
+      {#if countyOtherData.ira === 1}
         <span class=" text-green-900 font-bold">Does </span>
       {:else}
         <span class="text-lg text-red-900 font-bold">Does not</span>
@@ -156,20 +162,23 @@
       contain an IRA energy community
     </div>
     <div class="grid grid-cols-2">
-      <div class="h-10">bar chart</div>
-      <div class="text-xs">
+      
+      <div class="text-xs p-1">
         Population: <br />
-        Median income: <span class='font-semibold'>${countyDataUpdated.inc}</span><br />
+        Median income: <span class='font-semibold'>${countyOtherData.inc}</span><br />
         Non-white population share: <br />
         (Black X%, Asian Y%) <br />
         Hispanic population share: <br />
-        Poverty rate: <span class='font-semibold'>{Math.round(countyDataUpdated.pov * 10) / 10}%</span><br />
-        Unemployment rate: <span class='font-semibold'>{Math.round(countyDataUpdated.unemp * 10) / 10}%</span><br
+        Poverty rate: <span class='font-semibold'>{Math.round(countyOtherData.pov * 10) / 10}%</span><br />
+        Unemployment rate: <span class='font-semibold'>{Math.round(countyOtherData.unemp * 10) / 10}%</span><br
         />
-        Tertiary education attainment: <span class='font-semibold'>{Math.round(countyDataUpdated.ed * 10) /
+        Tertiary education attainment: <span class='font-semibold'>{Math.round(countyOtherData.ed * 10) /
           10}</span>%<br />
       </div>
-      <div>01</div>
+      <div class="flex px-2 p-1"><ECF_BarGraph bind:ecf_data /></div>
+      <div>
+        01
+      </div>
       <div>01</div>
       <div>01</div>
       <div>01</div>
@@ -183,13 +192,13 @@
         <span class="icon-cross"> x</span>
       </button>
       <div class="col-md-1">
-        {#each countyData as d}
+        {#each countyNameData as d}
           
           <h1>{d.county}, {d.state}</h1>
         {/each}
       </div>
       <div class="col-md-3">
-        {#each countyData as d}
+        {#each countyNameData as d}
           
           <p>
             There are {Math.round(d.population)} people in this county, of which

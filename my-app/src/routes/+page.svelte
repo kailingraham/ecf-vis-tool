@@ -105,6 +105,7 @@
     const requestURLUSNAMES =
       "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/paul/my-app/static/uscounties.csv";
     usnames = await d3.csv(requestURLUSNAMES);
+    console.log(usnames)
 
     counties = topojson.feature(us, us.objects.counties);
     counties_for_zoom = new Map(
@@ -470,14 +471,16 @@
         .filter(function (d) {
           return d !== feature && d.id.slice(0, 2) === feature.id.slice(0, 2);
         })
-        .attr("fill-opacity", 0.7);
+        .attr("fill-opacity", 1);
       chart.g
         .selectAll("path")
         .filter(function (d) {
           return d === feature;
         })
         .attr("stroke-opacity", 1)
-        .attr("stroke", "orange");
+        .attr("stroke", "black")
+        
+
     }
   }
 
@@ -1219,7 +1222,7 @@
   </Accordion>
 </div>
 
-<PanelApp {FIPScode} {showPanel} {processedData} />
+<PanelApp {FIPScode} {showPanel} {processedData} {color}/>
 
 <!-- style="margin: 0; text-align: center"> -->
 <!-- class="panel top-[60px] w-[350px] p-0" -->

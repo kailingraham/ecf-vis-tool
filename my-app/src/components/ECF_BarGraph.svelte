@@ -4,20 +4,20 @@
 
   export let ecf_data;
 
-  let width = 300;
-  let height = 150;
+  let width = 180;
+  let height = 120;
 
-  const margin = { top: 0, right: 20, bottom: 30, left: 60 };
+  const margin = { top: 3, right: 0, bottom: 15, left: 35 };
   const innerHeight = height - margin.top - margin.bottom;
   const innerWidth = width - margin.left - margin.right;
 
   $: xDomain = ecf_data.map((d) => d.scale);
   $: yDomain = ecf_data.map((d) => +d.ECF);
 
-  $: yScale = scaleBand().domain(xDomain).range([0, innerHeight]).padding(0.1);
-  $: xScale = scaleLinear()
+  $: xScale = scaleBand().domain(xDomain).range([0, innerWidth]).padding(0.1);
+  $: yScale = scaleLinear()
     .domain([0, Math.max.apply(null, yDomain)])
-    .range([0, innerWidth]);
+    .range([0, innerHeight]);
 
   let hovered = -1;
   let recorded_mouse_position = {
@@ -32,80 +32,99 @@
     { scale: "State", color: "gray" },
     { scale: "National", color: "gray" },
   ];
+
+  console.log(ecf_data);
 </script>
 
 <div class="visualization">
+  <div class='font-bold text-xs w-full text-center pl-4'>ECF Comparison</div>
   <svg {width} {height}>
     <g transform={`translate(${margin.left},${margin.top})`}>
-      {#each xScale.ticks() as tickValue}
-        <g transform={`translate(${xScale(tickValue)},0)`}>
-          <line y2={innerHeight} stroke="black" />
+      <!-- add x-axis and tick marks to ECF axis -->
+      {#each yScale.ticks() as tickValue}
+        <g
+          transform={`translate(0,${
+            innerHeight + margin.top - yScale(tickValue)
+          })`}
+        >
+          <line x2={innerWidth} stroke="gray" />
 
-          <text text-anchor="middle" dy=".7em" y={innerHeight + 3}>
+          <text text-anchor="middle" dx=".7em" x={-20}>
             {tickValue}
           </text>
         </g>
       {/each}
 
+      <!-- add bar labels to county/state/national axis -->
       {#each ecf_data as d, index}
         <text
-          text-anchor="end"
-          x="-3"
-          dy=".3em"
-          y={yScale(d.scale) + yScale.bandwidth() / 2}
+          text-anchor="middle"
+          y={innerHeight + margin.top + 10}
+          x={xScale(d.scale) + xScale.bandwidth() / 2}
         >
           {d.scale}
         </text>
 
-        <line x1="0" y1="119" x2="220" y2="119" stroke="black" />
-
         <!-- <rect
-          x="0"
-          y={yScale(d.scale)}
-          width={xScale(d.ECF)}
-          height={yScale.bandwidth()}
-          fill={index === hovered ? "brown" : barcolors[index].color}
-          on:mouseover={(event) => {
-            hovered = index;
-            recorded_mouse_position = {
-              x: event.pageX,
-              y: event.pageY,
-            };
-          }}
-          on:mouseout={(event) => {
-            hovered = -1;
-          }}
-        /> -->
+            x="0"
+            y={xScale(d.scale)}
+            width={yScale(d.ECF)}
+            height={xScale.bandwidth()}
+            fill={index === hovered ? "brown" : barcolors[index].color}
+            on:mouseover={(event) => {
+              hovered = index;
+              recorded_mouse_position = {
+                x: event.pageX,
+                y: event.pageY,
+              };
+            }}
+            on:mouseout={(event) => {
+              hovered = -1;
+            }}
+          /> -->
+
+        <!-- add bar mark for each scale -->
         <rect
-          x="0"
-          y={yScale(d.scale)}
-          width={xScale(d.ECF)}
-          height={yScale.bandwidth()}
+          y={innerHeight + margin.top - yScale(d.ECF)}
+          x={xScale(d.scale)}
+          height={yScale(d.ECF)}
+          width={xScale.bandwidth()}
           fill={barcolors[index].color}
         />
       {/each}
-    </g>
-  </svg>
-  <p>Carbon footprint per employee (tons CO2 per employee)</p>
 
-  <div
-    class={hovered === -1 ? "tooltip-hidden" : "tooltip-visible"}
-    style="left: {recorded_mouse_position.x -
-      90}px; bottom: {recorded_mouse_position.y - 500}px"
-  >
-    {#if hovered !== -1}
-      {ecf_data[hovered].ECF}
-    {/if}
-  </div>
+      <!-- draw y-axis -->
+      <line
+        y1={margin.top}
+        x1="0"
+        y2={innerHeight + margin.top}
+        x2="0"
+        stroke="black"
+      />
+
+      <!-- draw x-axis -->
+      <line
+        y1={height - margin.bottom}
+        x1={margin.left}
+        y2={height - margin.bottom}
+        x2={margin.left + innerWidth}
+        stroke="black"
+      />
+    </g>
+    <!-- add y-axis ECF label -->
+    <text class="-rotate-90" x={-height / 2} y={10} text-anchor="middle">
+      ECF (tons CO<sub>2</sub>e/employee)
+    </text>
+  </svg>
 </div>
 
 <style>
   .visualization {
     font: 9px sans-serif;
-    margin: 1px;
+    /* margin: 1px;
     margin-top: 0px;
     margin-left: -40px;
-    text-align: middle;
+    text-align: middle; */
     font-family: "Cardo", serif;
     /* position:absolute; */
   }
