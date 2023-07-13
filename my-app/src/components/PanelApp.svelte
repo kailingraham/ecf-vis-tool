@@ -138,7 +138,6 @@
 
   $: {
     arc_data = pieAngleGenerator(employment_data);
-    console.log(arc_data);
   }
 
   const arc_color = d3

@@ -7,8 +7,10 @@
   <h1 class="text-2xl font-bold font-default text-center">
     Employment Vulnerability to the Energy Transition (E-VET) tool
   </h1>
-  <Image src='../../static/MIT-CEEPR-logo-clr-for-light-background.png'/>
 </nav>
+<div class='absolute right-1 top-1'>
+  <img src="MIT-CEEPR-logo-clr-for-light-background.png" class='h-11'/>
+</div>
 
 <slot />
 

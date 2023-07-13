@@ -31,7 +31,7 @@
 
   // Initialize filtering terms
   let filterByIra = false;
-  let qualNonqual = false;
+  let qualNonqual = true;
   let migBounds = [0, 0.5];
   let incBounds = [0, 85000];
   let minBounds = [0, 100];
@@ -157,9 +157,9 @@
 
   openModal(Modal, {
     title:
-      "Welcome to the Migrant Employment & the Energy Transition (MEET) tool",
+      "Welcome to the Employment Vulnerability to the Energy Transition (E-VET) tool",
     message:
-      'This tool allows users to explore how energy transition vulnerability intersects with migrant populations in the United States. After closing this message, click "Start tutorial" on the left-hand side to be guided through the MEET tool, or start exploring on your own.',
+    'This tool allows users to explore how vulnerable communities across the U.S. are to economic shocks arising from the energy transition, as measured by their "employee carbon footprint" (ECF).',
     step: step,
     customProp: handleClick,
   });
@@ -797,7 +797,7 @@
   function resetView() {
     // Reset filter variables
     filterByIra = false;
-    qualNonqual = false;
+    qualNonqual = true;
     migBounds = [0, 0.5];
     incBounds = [0, 85000];
     minBounds = [0, 100];
