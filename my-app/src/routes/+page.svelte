@@ -6,6 +6,7 @@
   import RangeSlider from "svelte-range-slider-pips";
   import { AccordionItem, Accordion } from "flowbite-svelte";
 
+
   let unemployment = [];
   let us;
   let counties;
@@ -147,6 +148,7 @@
     });
 
     counties_list = data_state.map((row) => row.county);
+    showPanel = false;
   }
 
   // modal functions
@@ -159,7 +161,7 @@
     title:
       "Welcome to the Employment Vulnerability to the Energy Transition (E-VET) tool",
     message:
-    'This tool allows users to explore how vulnerable communities across the U.S. are to economic shocks arising from the energy transition, as measured by their "employee carbon footprint" (ECF).',
+      'This tool allows users to explore how vulnerable communities across the U.S. are to economic shocks arising from the energy transition, as measured by their "employee carbon footprint" (ECF).',
     step: step,
     customProp: handleClick,
   });
@@ -613,7 +615,7 @@
         d3.select(this).style("filter", null); // Reset filter on mouseout
       })
       .append("title")
-      .text((d, i) => title(d, Im.get(If[i])));
+      .text((d, i) => title(d, Im.get(If[i])))
 
     if (borders != null)
       svg
@@ -813,6 +815,7 @@
     selectedCounty = "";
   }
 
+
   /**----------------------------------------------------------------------------------------------------------------
    * Create choropleth
    * ----------------------------------------------------------------------------------------------------------------*/
@@ -937,6 +940,10 @@
   // create an array that contains a boolean for each Accordion Item that indicates whether it should be opened or closed. Will bind this to each AccordionItem in HTML
   let accordion_items_open = [true, false, false];
 </script>
+
+<!-- ---------------------------------------------------------------------------------------------------------------
+HTML 
+---------------------------------------------------------------------------------------------------------------- -->
 
 <div
   class="absolute w-[220px] top-[60px] left-[10px] z-10 bg-gray-100 bg-opacity-[0.675] rounded hover:rounded px-[10px] py-1 font-default"
