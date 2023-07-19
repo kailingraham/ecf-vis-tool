@@ -217,7 +217,7 @@
       <!-- ECF bar chart -->
       <div>
         <div class="w-full font-bold text-center">ECF Comparison</div>
-        <div class="flex px-2 p-1"><ECF_BarGraph bind:ecf_data /></div>
+        <div class="flex px-2 py-1"><ECF_BarGraph bind:ecf_data /></div>
       </div>
       <!-- employment and emissions by sector -->
       <div class="p-1">

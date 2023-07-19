@@ -48,7 +48,7 @@
         >
           <line x2={innerWidth} stroke="gray" />
 
-          <text text-anchor="middle" dx=".7em" x={-20}>
+          <text text-anchor="middle" dx=".7em" dy="0.25em" x={-20}>
             {tickValue}
           </text>
         </g>

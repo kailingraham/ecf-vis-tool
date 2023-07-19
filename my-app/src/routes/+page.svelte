@@ -3,9 +3,9 @@
   import { onMount } from "svelte";
   import { setContext } from "svelte";
   import PanelApp from "../components/PanelApp.svelte";
+  import Tutorial from "../components/Tutorial.svelte";
   import RangeSlider from "svelte-range-slider-pips";
   import { AccordionItem, Accordion } from "flowbite-svelte";
-
 
   let unemployment = [];
   let us;
@@ -29,6 +29,75 @@
   let color;
   let FIPScode;
   let showPanel = false;
+  let path;
+  let width;
+  let height;
+  let initialScale;
+  let offsetX;
+  let offsetY;
+  let svg;
+  let zoom;
+
+  // create an array that contains a boolean for each Accordion Item that indicates whether it should be opened or closed. Will bind this to each AccordionItem in HTML
+  let accordion_items_open = [true, false, false];
+
+  // Initialize tutorial props and functions
+  let step = 0;
+  let showTutorial = true;
+  let isGreyBackground = true;
+
+  function hideGreyBackground() {
+    isGreyBackground = false;
+  }
+  setContext("hideGreyBackground", () => {
+    hideGreyBackground();
+  });
+
+  async function handleNextStep() {
+    step = step + 1;
+    if (step === 2) {
+      selectedState = "California";
+      const stateFeature = statemap.get(selectedState);
+      zoomToFeature(stateFeature);
+      isolateFeature(stateFeature);
+    } else if (step === 3) {
+      resetView();
+      accordion_items_open = [false, true, false];
+      filterByIra = true;
+    } else if (step === 4) {
+      resetView();
+      accordion_items_open = [false, false, true];
+    } else if (step === 5) {
+      resetView();
+      // set drop-downs to Kern County, CA, and simulate county selection
+      await openSearchTray();
+      const selectedStateInfo = states.features.find((d) => d.id === '06');
+      selectedState = selectedStateInfo.properties.name;
+      const stateFeature = statemap.get(selectedState);
+      document.getElementById("state-select").value = selectedState;
+      zoomToFeature(stateFeature)
+      updateCountyDropdown('Kern');
+      handleCountySelection({ target: { value: 'Kern' } });
+    }
+  }
+  setContext("handleNextStep", () => {
+    handleNextStep();
+  });
+
+  function resetTutorial() {
+    step = 1;
+    selectedCounty = "";
+    showTutorial = false;
+    resetView();
+  }
+  setContext("resetTutorial", () => {
+    resetTutorial();
+  });
+
+  function startTutorial() {
+    resetTutorial();
+    showTutorial = true;
+  }
 
   // Initialize filtering terms
   let filterByIra = false;
@@ -41,20 +110,12 @@
   let povBounds = [0, 60];
   let edBounds = [0, 70];
 
-  let path;
-  let width;
-  let height;
-  let initialScale;
-  let offsetX;
-  let offsetY;
-  let svg;
-  let zoom;
-
+  // Initialize panel terms and functions
   export let id;
 
   setContext("resetIsolation", () => {
     resetIsolation();
-  });
+  });   
   setContext("setShowPanelFalse", () => {
     setShowPanelFalse();
   });
@@ -151,100 +212,6 @@
     showPanel = false;
   }
 
-  // modal functions
-  import { openModal } from "svelte-modals";
-  import Modal from "./Modal.svelte";
-  let step = -1;
-  let beginTutorial = false;
-
-  openModal(Modal, {
-    title:
-      "Welcome to the Employment Vulnerability to the Energy Transition (E-VET) tool",
-    message:
-      'This tool allows users to explore how vulnerable communities across the U.S. are to economic shocks arising from the energy transition, as measured by their "employee carbon footprint" (ECF).',
-    step: step,
-    customProp: handleClick,
-  });
-
-  function handleClick() {
-    if (step === 0) {
-      openModal(Modal, {
-        title:
-          "Welcome to the Migrant Employment & the Energy Transition (MEET) tool",
-        message:
-          "Employment is the greatest motivator for migration to the U.S., and migrant workers often face challenging economic conditions upon their arrival, especially if they are undocumented. At the same time, the energy transition is disrupting the U.S. economy and workforce, placing communities that depend on carbon-intensive industries at risk of economic displacement and job losses. There has been little policy attention paid specifically to migrants and undocumented workers in carbon-intensive communities that may be disproportionately affected by economic shocks from the energy transition, and workforce development policies need to better understand the intersection between migrant employment challenges and the disruption of communities as the economy decarbonizes.",
-        message1:
-          "This tool is designed to allow users to explore this intersection. Using publically available data, we calculate the average employee carbon footprint (ECF) of every county in the U.S. as a measure of its economic vulnerability to economic shocks during the energy transition, and map these carbon footprints across the U.S. We supplement this data with data from the American Community Survey on the migrant populations in these counties.",
-        message2: 'Click "OK" then "Next Step" to be guided through the tool.',
-        step: step,
-      });
-    }
-
-    handleCountySelection_modal();
-
-    if (step === 1) {
-      openModal(Modal, {
-        title:
-          "Many counties with high vulnerability have low migrant populations",
-        message:
-          "Appalachia is known for its coal mining industry and has been one of the regions hardest hit by the U.S. transition away from coal. Here, we see that Wetzel County in West Virginia has an ECF over 20 times the national average. However, less than 1% of the county are migrants, a trend shared by much of Appalachia. Feel free to explore adjacent counties by clicking on them or selecting them from the dropdown on the left-hand side of the screen.",
-        step: step,
-      });
-
-      handleCountySelection_modal();
-    }
-
-    if (step === 2) {
-      openModal(Modal, {
-        title:
-          "Urban centers with large migrant populations tend to have low energy transition vulnerabilities",
-        message:
-          "Brooklyn in New York City (Kings County) has a very large migrant population, and the majority of employment in the borough is in non-industrial sectors. These communities are unlikely to suffer direct job losses due to decarbonization (although may face other employment and workforce development challenges).",
-        step: step,
-      });
-
-      handleCountySelection_modal();
-    }
-    if (step === 3) {
-      openModal(Modal, {
-        title:
-          "Some areas with high migrant populations are also highly vulnerable",
-        message:
-          "West Texas counties such as Gaines County have both large migrant populations and signficiant employment vulnerability to the energy transition due to the presence of the oil and gas industry in the region. These communities will face unique challenges as the country decarbonizes in managing the specific vulnerabilities to economic displacement migrants in the region may face.",
-        step: step,
-      });
-
-      handleCountySelection_modal();
-    }
-    if (step === 4) {
-      resetView();
-      openModal(Modal, {
-        title: "Explore using the side panel",
-        message:
-          "Use the side panel to search for a particular county and state, and filter counties by their migrant population share.",
-        step: step,
-      });
-    }
-    if (step === 5) {
-      resetView();
-    }
-
-    step += 1;
-  }
-
-  function resetTutorial() {
-    step = 0;
-    selectedCounty = "";
-    beginTutorial = false;
-    resetView();
-  }
-
-  function redoTutorial() {
-    resetTutorial();
-    beginTutorial = true;
-    handleClick();
-  }
-
   async function updateCountyDropdown(selectedCounty) {
     await selectState({ currentTarget: { value: selectedState } });
     document.getElementById("county-select").value = selectedCounty;
@@ -282,9 +249,6 @@
     }
   }
 
-  $: if (selectedCounty && accordion_items_open[0] === true) {
-  }
-
   // selection functions
   function handleStateSelection(event) {
     selectedState = event.target.value;
@@ -297,7 +261,6 @@
     const stateFeature = statemap.get(selectedState);
     resetIsolation();
     zoomToFeature(stateFeature);
-    // const stateFIPS = d.id.slice(0, 2);
     isolateFeature(stateFeature);
   }
 
@@ -324,103 +287,6 @@
     resetIsolation();
     isolateFeature(countyFeature);
     showPanel = true;
-  }
-
-  function handleCountySelection_modal(event) {
-    if (event) {
-      selectedCounty = event.target.value;
-
-      const countyData = usnames.find(
-        (row) =>
-          row.county === selectedCounty && row.state_name === selectedState
-      );
-
-      if (selectedCounty === "") {
-        resetZoom();
-        resetIsolation();
-        return;
-      }
-
-      const countyFeature = counties_fips.get(countyData.county_fips);
-
-      if (countyFeature) {
-        FIPScode = countyData.county_fips;
-      } else {
-        FIPScode = "";
-      }
-      resetIsolation();
-      isolateFeature(countyFeature);
-    } else {
-      if (step === 1) {
-        selectedCounty = "Wetzel";
-        selectedState = "West Virginia";
-
-        const countyData = usnames.find(
-          (row) =>
-            row.county === selectedCounty && row.state_name === selectedState
-        );
-
-        const countyFeature = counties_fips.get(countyData.county_fips);
-        const stateFeature = statemap.get(selectedState);
-        zoomToFeature(stateFeature);
-        resetIsolation();
-        isolateFeature(countyFeature);
-        showPanel = true;
-
-        if (countyFeature) {
-          FIPScode = countyData.county_fips;
-        } else {
-          FIPScode = "";
-        }
-        // document.getElementById("state-select").value = selectedState;
-        // document.getElementById("county-select").value = selectedCounty;
-      }
-      if (step === 2) {
-        selectedCounty = "Kings";
-        selectedState = "New York";
-
-        const countyData = usnames.find(
-          (row) =>
-            row.county === selectedCounty && row.state_name === selectedState
-        );
-
-        const countyFeature = counties_fips.get(countyData.county_fips);
-        const stateFeature = statemap.get(selectedState);
-        zoomToFeature(stateFeature);
-        resetIsolation();
-        isolateFeature(countyFeature);
-        showPanel = true;
-
-        if (countyFeature) {
-          FIPScode = countyData.county_fips;
-        } else {
-          FIPScode = "";
-        }
-      }
-
-      if (step === 3) {
-        selectedCounty = "Gaines";
-        selectedState = "Texas";
-
-        const countyData = usnames.find(
-          (row) =>
-            row.county === selectedCounty && row.state_name === selectedState
-        );
-
-        const countyFeature = counties_fips.get(countyData.county_fips);
-        const stateFeature = statemap.get(selectedState);
-        zoomToFeature(stateFeature);
-        resetIsolation();
-        isolateFeature(countyFeature);
-        showPanel = true;
-
-        if (countyFeature) {
-          FIPScode = countyData.county_fips;
-        } else {
-          FIPScode = "";
-        }
-      }
-    }
   }
 
   function zoomToFeature(feature) {
@@ -615,7 +481,7 @@
         d3.select(this).style("filter", null); // Reset filter on mouseout
       })
       .append("title")
-      .text((d, i) => title(d, Im.get(If[i])))
+      .text((d, i) => title(d, Im.get(If[i])));
 
     if (borders != null)
       svg
@@ -773,6 +639,24 @@
       .text("avg")
       .style("font-size", "12px");
 
+    tickGroup
+      .append("line")
+      .attr(
+        "x1",
+        ((meanValue - minValue) / (maxValue - minValue)) *
+          (legendWidth - legendMargin.right)
+      )
+      .attr(
+        "x2",
+        ((meanValue - minValue) / (maxValue - minValue)) *
+          (legendWidth - legendMargin.right)
+      )
+      .attr("y1", 0)
+      .attr("y2", 10)
+      // .attr('z-index', '1000')
+      .style("stroke", "black")
+      .style("stroke-width", 1);
+
     const chartProperties = {
       node: svg.node(),
       scales: { color },
@@ -814,7 +698,6 @@
     selectedState = "";
     selectedCounty = "";
   }
-
 
   /**----------------------------------------------------------------------------------------------------------------
    * Create choropleth
@@ -936,9 +819,6 @@
         : d3.rgb(baseColor.r, baseColor.g, baseColor.b, 0.1);
     });
   }
-
-  // create an array that contains a boolean for each Accordion Item that indicates whether it should be opened or closed. Will bind this to each AccordionItem in HTML
-  let accordion_items_open = [true, false, false];
 </script>
 
 <!-- ---------------------------------------------------------------------------------------------------------------
@@ -951,7 +831,7 @@ HTML
   <div class="grid grid-cols-2 pt-1 pb-2 gap-1">
     <button
       class="bg-white hover:bg-blue-700 hover:text-white text-blue-700 border border-blue-500 text-sm py-0 px-1 rounded font-default"
-      on:click={redoTutorial}>Start tutorial</button
+      on:click={startTutorial}>Start tutorial</button
     >
     <button
       class="bg-blue-500 hover:bg-blue-700 text-white text-sm py-0 px-1 rounded font-default"
@@ -1218,9 +1098,6 @@ HTML
 
 <PanelApp {FIPScode} {showPanel} {processedData} {color} />
 
-<!-- style="margin: 0; text-align: center"> -->
-<!-- class="panel top-[60px] w-[350px] p-0" -->
-
 <!-- Legend -->
 <div
   class="fixed top-[60px] right-2 bg-gray-100 p-1 font-default z-10 bg-opacity-[0.675] rounded"
@@ -1231,41 +1108,15 @@ HTML
   <div id="legendContainer" class="top-0 m-0" />
 </div>
 
-<div id="chart-container" />
-
-{#if beginTutorial === true}
-  <div class="tutorial">
-    {#if step === 1}
-      <!-- <h2>Step 2: county!</h2>
-        <p>zoom to county.</p> -->
-      <button class="tutorial-button" on:click={handleClick}>Next step</button>
-    {:else if step === 2}
-      <!-- <h2>Step 3: Play with filter</h2>
-        <p>Play w/ filter</p> -->
-      <button class="tutorial-button" on:click={handleClick}>Next Step</button>
-    {:else if step === 3}
-      <!-- <h2>Step 4: Play with filter</h2>
-        <p>Play w/ filter</p> -->
-      <button class="tutorial-button" on:click={handleClick}>Next Step</button>
-    {:else if step === 4}
-      <!-- <h2>Step 4: Play with filter</h2>
-        <p>Play w/ filter</p> -->
-      <button class="tutorial-button" on:click={handleClick}>Next Step</button>
-    {:else if step === 5}
-      <!-- <h2>Step 4: Play with filter</h2>
-        <p>Play w/ filter</p> -->
-      <button class="tutorial-button" on:click={resetTutorial}
-        >Finish tutorial</button
-      >
-    {/if}
-  </div>
+{#if isGreyBackground}
+  <div
+    class="absolute top-[50px] left-0 w-full bottom-0 bg-gray-500 opacity-50 z-[1000]"
+  />
 {/if}
 
-<!-- {#if beginTutorial === false}
-    <div style="position: absolute; bottom: 20px; right: 50%">
-      asdf
-    </div>
-  {/if} -->
+<div id="chart-container" />
+
+<Tutorial {step} {showTutorial} />
 
 <style>
   .filterSlider {
