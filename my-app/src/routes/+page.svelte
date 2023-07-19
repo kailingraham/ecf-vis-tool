@@ -71,13 +71,13 @@
       resetView();
       // set drop-downs to Kern County, CA, and simulate county selection
       await openSearchTray();
-      const selectedStateInfo = states.features.find((d) => d.id === '06');
+      const selectedStateInfo = states.features.find((d) => d.id === "06");
       selectedState = selectedStateInfo.properties.name;
       const stateFeature = statemap.get(selectedState);
       document.getElementById("state-select").value = selectedState;
-      zoomToFeature(stateFeature)
-      updateCountyDropdown('Kern');
-      handleCountySelection({ target: { value: 'Kern' } });
+      zoomToFeature(stateFeature);
+      updateCountyDropdown("Kern");
+      handleCountySelection({ target: { value: "Kern" } });
     }
   }
   setContext("handleNextStep", () => {
@@ -109,13 +109,14 @@
   let unempBounds = [0, 15.5];
   let povBounds = [0, 60];
   let edBounds = [0, 70];
+  let pop_log10Bounds = [2, Math.log10(11000000)];
 
   // Initialize panel terms and functions
   export let id;
 
   setContext("resetIsolation", () => {
     resetIsolation();
-  });   
+  });
   setContext("setShowPanelFalse", () => {
     setShowPanelFalse();
   });
@@ -165,6 +166,7 @@
           top_race_percent: feature.properties.top_race_percent,
           next_top_race: feature.properties.next_top_race,
           next_top_race_percent: feature.properties.next_top_race_percent,
+          pop_log10: feature.properties.POP_log10,
         };
       });
     });
@@ -289,6 +291,7 @@
     showPanel = true;
   }
 
+  // zoom and isolation functions
   function zoomToFeature(feature) {
     const bounds = path.bounds(feature);
     const [[x0, y0], [x1, y1]] = bounds;
@@ -310,7 +313,6 @@
       );
   }
 
-  // isolate counties/states by reducing opacity of non-selected counties/states
   function isolateFeature(feature) {
     if (feature.id.length === 2) {
       chart.g
@@ -357,6 +359,7 @@
       );
   }
 
+  // choropleth function
   function Choropleth(
     data,
     {
@@ -691,6 +694,7 @@
     unempBounds = [0, 15.5];
     povBounds = [0, 60];
     edBounds = [0, 70];
+    pop_log10Bounds = [2, Math.log10(11000000)];
 
     setShowPanelFalse();
     resetZoom();
@@ -710,6 +714,7 @@
 
       // Identify all filter variables here
       filterVars: [
+        "pop_log10",
         "mig_percent",
         "inc",
         "min_percent",
@@ -783,6 +788,8 @@
         chart.mapFilterVars["unemp"][chart.Im.get(chart.If[i])];
       const countyPov = chart.mapFilterVars["pov"][chart.Im.get(chart.If[i])];
       const countyEd = chart.mapFilterVars["ed"][chart.Im.get(chart.If[i])];
+      const countyPop_log10 =
+        chart.mapFilterVars["pop_log10"][chart.Im.get(chart.If[i])];
 
       // Put all filter conditions here
       const conditions = [
@@ -806,6 +813,9 @@
 
         countyEd >= edBounds[0],
         countyEd <= edBounds[1],
+
+        countyPop_log10 >= pop_log10Bounds[0],
+        countyPop_log10 <= pop_log10Bounds[1],
       ];
 
       if (filterByIra) {
@@ -818,6 +828,15 @@
         ? baseColor
         : d3.rgb(baseColor.r, baseColor.g, baseColor.b, 0.1);
     });
+  }
+
+  function roundToThreeSignificantFigures(number) {
+    if (number === 0) return 0;
+
+    const exponent = Math.floor(Math.log10(Math.abs(number)));
+    const scale = Math.pow(10, 2 - exponent);
+
+    return Math.round(number * scale) / scale;
   }
 </script>
 
@@ -954,6 +973,25 @@ HTML
       <!-- demographic filter variables -->
       <div class="p-0">
         <h4 style="margin: 0px; text-align: center; font-size: 12px">
+          Population
+        </h4>
+        <div class="filterSlider">
+          <RangeSlider
+            range
+            bind:values={pop_log10Bounds}
+            min={2}
+            max={Math.log10(11000000)}
+            step={0.004}
+            pips
+            pipstep={150}
+            first={"label"}
+            last={"label"}
+            formatter={(v) => Number( (10**v).toPrecision(3) ).toLocaleString("en")}
+            float
+            springValues={{ stiffness: 1, damping: 1 }}
+          />
+        </div>
+        <h4 style="margin: 0px; text-align: center; font-size: 12px">
           Urbanity (1-3 urban, 4-9 rural)
         </h4>
         <div class="filterSlider">
@@ -1006,26 +1044,6 @@ HTML
             first={"label"}
             last={"label"}
             formatter={(v) => Math.round(v * 10) / 10}
-            suffix={"%"}
-            float
-            springValues={{ stiffness: 1, damping: 1 }}
-          />
-        </div>
-        <h4 style="margin: 0px; text-align: center; font-size: 12px">
-          Migrant population share
-        </h4>
-        <div class="filterSlider">
-          <RangeSlider
-            range
-            bind:values={migBounds}
-            min={0}
-            max={0.5}
-            step={0.005}
-            pips
-            pipstep={20}
-            first={"label"}
-            last={"label"}
-            formatter={(v) => Math.round(v * 1000) / 10}
             suffix={"%"}
             float
             springValues={{ stiffness: 1, damping: 1 }}
