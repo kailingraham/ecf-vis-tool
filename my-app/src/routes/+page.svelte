@@ -987,8 +987,8 @@ HTML
             pips
             pipstep={500}
             last='false'
+            first='label'
             rest="label"
-            
             formatter={(v) => roundAndNotate(v)}
             float
             springValues={{ stiffness: 1, damping: 1 }}
