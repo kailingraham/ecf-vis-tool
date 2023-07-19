@@ -829,15 +829,17 @@
         : d3.rgb(baseColor.r, baseColor.g, baseColor.b, 0.1);
     });
   }
-
-  function roundToThreeSignificantFigures(number) {
-    if (number === 0) return 0;
-
-    const exponent = Math.floor(Math.log10(Math.abs(number)));
-    const scale = Math.pow(10, 2 - exponent);
-
-    return Math.round(number * scale) / scale;
+  function roundAndNotate(number) {
+    let number_3_dig = Number((10 ** number).toPrecision(3));
+    let number_rounded = number_3_dig;
+    if (number_3_dig >= 1000000) {
+      number_rounded = (number_3_dig / 1000000).toLocaleString("eng") + "M";
+    } else if (number_3_dig >= 1000) {
+      number_rounded = (number_3_dig / 1000).toLocaleString("eng") + "k";
+    }
+    return number_rounded;
   }
+  console.log(roundAndNotate(7.04));
 </script>
 
 <!-- ---------------------------------------------------------------------------------------------------------------
@@ -981,12 +983,13 @@ HTML
             bind:values={pop_log10Bounds}
             min={2}
             max={Math.log10(11000000)}
-            step={0.004}
+            step={0.002}
             pips
-            pipstep={150}
-            first={"label"}
-            last={"label"}
-            formatter={(v) => Number( (10**v).toPrecision(3) ).toLocaleString("en")}
+            pipstep={500}
+            last='false'
+            rest="label"
+            
+            formatter={(v) => roundAndNotate(v)}
             float
             springValues={{ stiffness: 1, damping: 1 }}
           />
@@ -1003,8 +1006,7 @@ HTML
             step={1}
             pips
             pipstep={1}
-            first={"label"}
-            last={"label"}
+            all="label"
             formatter={(v) => Math.round(v)}
             float
             springValues={{ stiffness: 1, damping: 1 }}
