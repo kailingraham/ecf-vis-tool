@@ -5,18 +5,17 @@
     <link rel="icon" href="./favicon.png" />
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="content-security-policy" content="">
-		<link href="./_app/immutable/assets/_layout.b74285c8.css" rel="stylesheet">
-		<link href="./_app/immutable/assets/_page.440e28b6.css" rel="stylesheet">
-		<link rel="modulepreload" href="./_app/immutable/entry/start.b14d0768.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index.464d2952.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.411e7d6a.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index.a30acd9a.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.3d37c0bc.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.eaaebd33.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/store.88cb15ee.js">
+		<link href="./_app/immutable/assets/_layout.0bd5d128.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/_page.e2a1d3e8.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.afd77280.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.972b9b11.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.a039808c.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.1bdb8f99.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.b39c8407.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.eb4f4a8d.js">
 		<link rel="modulepreload" href="./_app/immutable/entry/_layout.js.984db11e.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/_layout.da46b06b.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.91b07ca9.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.e6badc9d.js">
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.0/mapbox-gl.css"
       rel="stylesheet"
@@ -76,33 +75,45 @@
 
 
 
-
-
-
 <div class="fixed top-[60px] right-2 bg-gray-100 p-1 font-default z-10 bg-opacity-[0.675] rounded"><h1 class="text-center text-sm font-bold space-y-0">Employee Carbon Footprint (ECF)<br>(tons CO<sub>2</sub>e per employee)
   </h1>
   <div id="legendContainer" class="top-0 m-0"></div></div>
 
+<div class="absolute top-[50px] left-0 w-full bottom-0 bg-gray-500 opacity-50 z-[1000]"></div>
+
 <div id="chart-container" class="svelte-yo5m97"></div>
 
+<div role="dialog" class="modal1 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-center items-center z-50 svelte-1py6nos"><div class="bg-white p-4 font-default rounded-md"><h2 class="mb-2 font-bold text-lg text-center">Identifying vulnerable communities through employee carbon footprints
+        </h2>
+        <p class="text-sm mb-2 text-justify">The energy transition is disrupting the U.S. economy and workforce,
+          placing communities that depend on carbon-intensive industries at risk
+          of economic displacement and job losses.
+        </p>
+        <p class="text-sm mb-2 text-justify">This tool, developed by MIT&#39;s Center for Energy &amp; Environmental Policy
+          Research, allows policymakers, researchers, and communities to
+          understand how economic, and specifically employment, impacts of the
+          energy transition are likely to be distributed across the United
+          States. We measure this by calculating the average carbon emissions
+          per employee (the &quot;employee carbon footprint&quot;, or ECF) of every U.S.
+          county.
+        </p>
+        <p class="text-sm mb-2 text-justify">Click &quot;Start tutorial&quot; to be guided through the features of the tool,
+          or &quot;Close&quot; to start exploring.
+        </p>
+        <div class="flex mx-auto justify-center gap-2"><button class="bg-blue-500 hover:bg-blue-700 text-white text-sm py-1 px-3 rounded font-default">Start tutorial</button>
+          <button class="bg-white hover:bg-blue-700 hover:text-white text-blue-700 border border-blue-500 text-sm py-1 px-8 rounded font-default">Close</button></div></div></div>
 
 
-
-
-<div slot="backdrop" class="backdrop svelte-1owvs5r"></div>
 
 
   
-    
-        
-      
 
 
 
 			
 			<script>
 				{
-					__sveltekit_1ur0mgt = {
+					__sveltekit_1ocs2qj = {
 						env: {},
 						base: new URL(".", location).pathname.slice(0, -1),
 						element: document.currentScript.parentElement
@@ -111,10 +122,10 @@
 					const data = [null,null];
 
 					Promise.all([
-						import("./_app/immutable/entry/start.b14d0768.js"),
-						import("./_app/immutable/entry/app.3d37c0bc.js")
+						import("./_app/immutable/entry/start.afd77280.js"),
+						import("./_app/immutable/entry/app.b39c8407.js")
 					]).then(([kit, app]) => {
-						kit.start(app, __sveltekit_1ur0mgt.element, {
+						kit.start(app, __sveltekit_1ocs2qj.element, {
 							node_ids: [0, 2],
 							data,
 							form: null,
