@@ -5,17 +5,17 @@
     <link rel="icon" href="./favicon.png" />
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="content-security-policy" content="">
-		<link href="./_app/immutable/assets/_layout.0bd5d128.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/_layout.58928aee.css" rel="stylesheet">
 		<link href="./_app/immutable/assets/_page.e2a1d3e8.css" rel="stylesheet">
-		<link rel="modulepreload" href="./_app/immutable/entry/start.0711e0f5.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index.972b9b11.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.c198b1b8.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index.1bdb8f99.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.ce1071bd.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.eb4f4a8d.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.9c63c5b2.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.f88c915f.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.82893d64.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.f994a9a0.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.2ec58f4e.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.5ed5fd36.js">
 		<link rel="modulepreload" href="./_app/immutable/entry/_layout.js.984db11e.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/_layout.da46b06b.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.77ea99e5.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.34f5d919.js">
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.0/mapbox-gl.css"
       rel="stylesheet"
@@ -36,9 +36,12 @@
     <div style="display: contents">
 
 
-<nav class="navbar svelte-1owvs5r"><h1 class="text-2xl font-bold font-default text-center">Employment Vulnerability to the Energy Transition (E-VET) tool
-  </h1></nav>
-<div class="absolute right-1 top-1"><img src="MIT-CEEPR-logo-clr-for-light-background.png" class="h-11"></div>
+<nav class="flex min-h-[50px] items-center bg-white"><div class="w-1/5 flex"></div>
+  <div class="flex flex-grow items-center justify-center"><h1 class="text-2xl font-bold font-default text-center">Employment Vulnerability to the Energy Transition (E-VET) tool
+    </h1></div>
+  <div class="w-1/5 flex justify-end"><img src="MIT-CEEPR-logo-clr-for-light-background.png" alt="ceepr_logo" class="h-10 max-h-full max-w-full w-auto object-contain"></div></nav>
+
+
 
 
 
@@ -79,7 +82,7 @@
   </h1>
   <div id="legendContainer" class="top-0 m-0"></div></div>
 
-<div class="absolute top-[50px] left-0 w-full bottom-0 bg-gray-500 opacity-50 z-[1000]"></div>
+<div class="absolute left-0 top-[50px] w-full bottom-0 bg-gray-500 opacity-50 z-[1000]"></div>
 
 <div id="chart-container" class="svelte-yo5m97"></div>
 
@@ -102,18 +105,16 @@
         </p>
         <div class="flex mx-auto justify-center gap-2"><button class="bg-blue-500 hover:bg-blue-700 text-white text-sm py-1 px-3 rounded font-default">Start tutorial</button>
           <button class="bg-white hover:bg-blue-700 hover:text-white text-blue-700 border border-blue-500 text-sm py-1 px-8 rounded font-default">Close</button></div></div></div>
-
-
-
-
-  
-
+<div class="absolute left-1 bottom-1 w-50 rounded bg-gray-100 bg-opacity-10"><p class="text-[8px] font-default">Data: 2023, Graham &amp; Knittel, MIT Center for Energy &amp; Environmental Policy Research.<br>
+    Tool developed by Kailin Graham, Serena Patel and Paul Sizaire.
+  </p>
+</div>
 
 
 			
 			<script>
 				{
-					__sveltekit_f5rscd = {
+					__sveltekit_1xixeah = {
 						env: {},
 						base: new URL(".", location).pathname.slice(0, -1),
 						element: document.currentScript.parentElement
@@ -122,10 +123,10 @@
 					const data = [null,null];
 
 					Promise.all([
-						import("./_app/immutable/entry/start.0711e0f5.js"),
-						import("./_app/immutable/entry/app.ce1071bd.js")
+						import("./_app/immutable/entry/start.9c63c5b2.js"),
+						import("./_app/immutable/entry/app.2ec58f4e.js")
 					]).then(([kit, app]) => {
-						kit.start(app, __sveltekit_f5rscd.element, {
+						kit.start(app, __sveltekit_1xixeah.element, {
 							node_ids: [0, 2],
 							data,
 							form: null,
