@@ -839,7 +839,7 @@
     }
     return number_rounded;
   }
-  console.log(roundAndNotate(7.04));
+  
 </script>
 
 <!-- ---------------------------------------------------------------------------------------------------------------
@@ -986,8 +986,8 @@ HTML
             step={0.002}
             pips
             pipstep={500}
-            last='false'
-            first='label'
+            last="false"
+            first="label"
             rest="label"
             formatter={(v) => roundAndNotate(v)}
             float
@@ -1130,13 +1130,16 @@ HTML
 
 {#if isGreyBackground}
   <div
-    class="absolute top-[50px] left-0 w-full bottom-0 bg-gray-500 opacity-50 z-[1000]"
+    
+    class="absolute left-0 top-[50px] w-full bottom-0 bg-gray-500 opacity-50 z-[1000]"
   />
 {/if}
 
 <div id="chart-container" />
 
 <Tutorial {step} {showTutorial} />
+
+
 
 <style>
   .filterSlider {
