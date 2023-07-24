@@ -29,8 +29,8 @@
 
   const barcolors = [
     { scale: "County", color: "black" },
-    { scale: "State", color: "gray" },
-    { scale: "National", color: "gray" },
+    { scale: "State avg", color: "gray" },
+    { scale: "U.S. avg", color: "gray" },
   ];
 
   console.log(ecf_data);

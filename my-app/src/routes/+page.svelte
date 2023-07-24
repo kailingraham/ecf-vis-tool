@@ -5,7 +5,12 @@
   import PanelApp from "../components/PanelApp.svelte";
   import Tutorial from "../components/Tutorial.svelte";
   import RangeSlider from "svelte-range-slider-pips";
-  import { AccordionItem, Accordion } from "flowbite-svelte";
+  import {
+    AccordionItem,
+    Accordion,
+    Popover,
+    ChevronRight,
+  } from "flowbite-svelte";
 
   let unemployment = [];
   let us;
@@ -96,6 +101,7 @@
 
   function startTutorial() {
     resetTutorial();
+    openSearchTray();
     showTutorial = true;
   }
 
@@ -839,7 +845,6 @@
     }
     return number_rounded;
   }
-  
 </script>
 
 <!-- ---------------------------------------------------------------------------------------------------------------
@@ -994,9 +999,44 @@ HTML
             springValues={{ stiffness: 1, damping: 1 }}
           />
         </div>
-        <h4 style="margin: 0px; text-align: center; font-size: 12px">
-          Urbanity (1-3 urban, 4-9 rural)
-        </h4>
+        <div class="flex relative items-center">
+          <h4 class="flex-1 m-0 text-center text-xs space-x-0">
+            Urbanity (1-3 urban, 4-9 rural)
+          </h4>
+          <button id="urbanityHelp" class="inline absolute right-0">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-[15px] h-[15px] mr-[2px] fill-gray-400"
+              ><path
+                fill-rule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                clip-rule="evenodd"
+              /></svg
+            >
+            <span class="sr-only">Show information</span></button
+          >
+        </div>
+        <Popover
+          triggeredBy="#urbanityHelp"
+          class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 z-20"
+          placement="right-start"
+        >
+          <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Urbanity
+            </h3>
+            Measured by a county's
+            <a
+              class="text-blue-500 underline"
+              href="https://www.ers.usda.gov/data-products/rural-urban-continuum-codes/"
+              target="_blank">"Rural-Urban Continuum Code"</a
+            >
+            as per the U.S. Department of Agriculture's Economic Research Service.
+            Codes 1 to 3 are considered urban, codes 4 to 9 are considered rural.
+          </div>
+        </Popover>
         <div class="filterSlider">
           <RangeSlider
             range
@@ -1012,104 +1052,336 @@ HTML
             springValues={{ stiffness: 1, damping: 1 }}
           />
         </div>
-        <h4 class="m-0 text-center text-xs space-x-0">Median income</h4>
-        <div class="filterSlider">
-          <RangeSlider
-            range
-            bind:values={incBounds}
-            min={15000}
-            max={85000}
-            step={500}
-            pips
-            pipstep={20}
-            first={"label"}
-            last={"label"}
-            formatter={(v) => Math.round(v / 100) / 10}
-            prefix={"$"}
-            suffix={"k"}
-            float
-            springValues={{ stiffness: 1, damping: 1 }}
-          />
+        <div class="flex relative items-center">
+          <h4 class="flex-1 m-0 text-center text-xs space-x-0">
+            Median income by county
+          </h4>
+          <button id="medIncHelp" class="inline absolute right-0">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-[15px] h-[15px] mr-[2px] fill-gray-400"
+              ><path
+                fill-rule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                clip-rule="evenodd"
+              /></svg
+            >
+            <span class="sr-only">Show information</span></button
+          >
         </div>
-        <h4 style="margin: 0px; text-align: center; font-size: 12px">
-          Minority population share
-        </h4>
-        <div class="filterSlider">
-          <RangeSlider
-            range
-            bind:values={minBounds}
-            min={0}
-            max={100}
-            step={0.5}
-            pips
-            pipstep={50}
-            first={"label"}
-            last={"label"}
-            formatter={(v) => Math.round(v * 10) / 10}
-            suffix={"%"}
-            float
-            springValues={{ stiffness: 1, damping: 1 }}
-          />
+        <Popover
+          triggeredBy="#medIncHelp"
+          class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 z-20"
+          placement="right-start"
+        >
+          <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Median income
+            </h3>
+            Median annual personal income of population in a given county, from ACS 5-year estimates (2020). <span class='text-red-600 font-semibold'>Red mark</span> indicates median U.S. personal income.
+          </div>
+        </Popover>
+        <div class="flex relative">
+          <div class="filterSlider flex-1">
+            <RangeSlider
+              range
+              bind:values={incBounds}
+              min={15000}
+              max={85000}
+              step={500}
+              pips
+              pipstep={20}
+              first={"label"}
+              last={"label"}
+              formatter={(v) => Math.round(v / 100) / 10}
+              prefix={"$"}
+              suffix={"k"}
+              float
+              springValues={{ stiffness: 1, damping: 1 }}
+            />
+          </div>
+          <svg
+            height="25px"
+            width="180px"
+            class="absolute h-7 w-[180px] mx-[10px]"
+          >
+            <line
+              x1="{(39782-15000)/(85000-15000)*100}%"
+              x2="{(39782-15000)/(85000-15000)*100}%"
+              y1="60%"
+              y2="75%"
+              stroke="red"
+              stroke-width="1.5px"
+            />
+          </svg>
         </div>
-        <h4 style="margin: 0px; text-align: center; font-size: 12px">
-          Unemployment rate
-        </h4>
-        <div class="filterSlider">
-          <RangeSlider
-            range
-            bind:values={unempBounds}
-            min={0}
-            max={15.5}
-            step={0.25}
-            pips
-            pipstep={20}
-            first={"label"}
-            last={"label"}
-            formatter={(v) => Math.round(v * 100) / 100}
-            suffix={"%"}
-            float
-            springValues={{ stiffness: 1, damping: 1 }}
-          />
+        <div class="flex relative items-center">
+          <h4 class="flex-1 m-0 text-center text-xs space-x-0">
+            Minority population share
+          </h4>
+          <button id="minHelp" class="inline absolute right-0">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-[15px] h-[15px] mr-[2px] fill-gray-400"
+              ><path
+                fill-rule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                clip-rule="evenodd"
+              /></svg
+            >
+            <span class="sr-only">Show information</span></button
+          >
         </div>
-        <h4 style="margin: 0px; text-align: center; font-size: 12px">
-          Poverty rate
-        </h4>
-        <div class="filterSlider">
-          <RangeSlider
-            range
-            bind:values={povBounds}
-            min={0}
-            max={60}
-            step={1}
-            pips
-            pipstep={20}
-            first={"label"}
-            last={"label"}
-            formatter={(v) => Math.round(v * 100) / 100}
-            suffix={"%"}
-            float
-            springValues={{ stiffness: 1, damping: 1 }}
-          />
+        <Popover
+          triggeredBy="#minHelp"
+          class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 z-20"
+          placement="right-start"
+        >
+          <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Minority population share
+            </h3>
+            Defined as the share of a county's total population that is Hispanic
+            and/or non-White (ACS, 2020). <span class='text-red-600 font-semibold'>Red mark</span> indicates national minority population share.
+          </div>
+        </Popover>
+        <div class="flex relative">
+          <div class="filterSlider flex-1">
+            <RangeSlider
+              range
+              bind:values={minBounds}
+              min={0}
+              max={100}
+              step={0.5}
+              pips
+              pipstep={50}
+              first={"label"}
+              last={"label"}
+              formatter={(v) => Math.round(v * 10) / 10}
+              suffix={"%"}
+              float
+              springValues={{ stiffness: 1, damping: 1 }}
+            />
+          </div>
+          <svg
+            height="25px"
+            width="180px"
+            class="absolute h-7 w-[180px] mx-[10px]"
+          >
+            <line
+              x1="{39.9}%"
+              x2="{39.9}%"
+              y1="60%"
+              y2="75%"
+              stroke="red"
+              stroke-width="1.5px"
+            />
+          </svg>
         </div>
-        <h4 style="margin: 0px; text-align: center; font-size: 12px">
-          Tertiary education attainment
-        </h4>
-        <div class="filterSlider">
-          <RangeSlider
-            range
-            bind:values={edBounds}
-            min={0}
-            max={70}
-            step={1}
-            pips
-            pipstep={25}
-            first={"label"}
-            last={"label"}
-            formatter={(v) => Math.round(v * 100) / 100}
-            suffix={"%"}
-            float
-            springValues={{ stiffness: 1, damping: 1 }}
-          />
+        <div class="flex relative items-center">
+          <h4 class="flex-1 m-0 text-center text-xs space-x-0">
+            Unemployment rate
+          </h4>
+          <button id="unempHelp" class="inline absolute right-0">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-[15px] h-[15px] mr-[2px] fill-gray-400"
+              ><path
+                fill-rule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                clip-rule="evenodd"
+              /></svg
+            >
+            <span class="sr-only">Show information</span></button
+          >
+        </div>
+        <Popover
+          triggeredBy="#unempHelp"
+          class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 z-20"
+          placement="right-start"
+        >
+          <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Unemployment rate
+            </h3>
+            5-year average unemployment rate (ACS, 2020), defined as percentage of
+            labor force that is not employed.  <span class='text-red-600 font-semibold'>Red mark</span> indicates national unemployment rate.
+          </div>
+        </Popover>
+        <div class="flex relative">
+          <div class="filterSlider flex-1">
+            <RangeSlider
+              range
+              bind:values={unempBounds}
+              min={0}
+              max={15.5}
+              step={0.25}
+              pips
+              pipstep={20}
+              first={"label"}
+              last={"label"}
+              formatter={(v) => Math.round(v * 100) / 100}
+              suffix={"%"}
+              float
+              springValues={{ stiffness: 1, damping: 1 }}
+            />
+          </div>
+          <svg
+            height="25px"
+            width="180px"
+            class="absolute h-7 w-[180px] mx-[10px]"
+          >
+            <line
+              x1="{(2.72 / 15.5) * 100}%"
+              x2="{(2.72 / 15.5) * 100}%"
+              y1="60%"
+              y2="75%"
+              stroke="red"
+              stroke-width="1.5px"
+            />
+          </svg>
+        </div>
+        <div class="flex relative items-center">
+          <h4 class="flex-1 m-0 text-center text-xs space-x-0">Poverty rate</h4>
+          <button id="povHelp" class="inline absolute right-0">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-[15px] h-[15px] mr-[2px] fill-gray-400"
+              ><path
+                fill-rule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                clip-rule="evenodd"
+              /></svg
+            >
+            <span class="sr-only">Show information</span></button
+          >
+        </div>
+        <Popover
+          triggeredBy="#povHelp"
+          class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 z-20"
+          placement="right-start"
+        >
+          <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Poverty rate
+            </h3>
+            5-year average share of population deemed to be living in poverty (ACS,
+            2020). A family is considered in poverty if total family income is below
+            a given threshold (See
+            <a
+              class="text-blue-500 underline"
+              href="https://www.census.gov/topics/income-poverty/poverty/guidance/poverty-measures.html"
+              target="_blank">How the Census Bureau Measures Poverty</a
+            >).  <span class='text-red-600 font-semibold'>Red mark</span> indicates national poverty rate.
+          </div>
+        </Popover>
+        <div class="flex relative">
+          <div class="filterSlider flex-1">
+            <RangeSlider
+              range
+              bind:values={povBounds}
+              min={0}
+              max={60}
+              step={1}
+              pips
+              pipstep={20}
+              first={"label"}
+              last={"label"}
+              formatter={(v) => Math.round(v * 100) / 100}
+              suffix={"%"}
+              float
+              springValues={{ stiffness: 1, damping: 1 }}
+            />
+          </div>
+          <svg
+            height="25px"
+            width="180px"
+            class="absolute h-7 w-[180px] mx-[10px]"
+          >
+            <line
+              x1="{(12.5 / 60) * 100}%"
+              x2="{(12.5 / 60) * 100}%"
+              y1="60%"
+              y2="75%"
+              stroke="red"
+              stroke-width="1.5px"
+            />
+          </svg>
+        </div>
+        <div class="flex relative items-center">
+          <h4 class="flex-1 m-0 text-center text-xs space-x-0">
+            Tertiary education attainment
+          </h4>
+          <button id="edHelp" class="inline absolute right-0">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-[15px] h-[15px] mr-[2px] fill-gray-400"
+              ><path
+                fill-rule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 01-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 01-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 01-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584zM12 18a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                clip-rule="evenodd"
+              /></svg
+            >
+            <span class="sr-only">Show information</span></button
+          >
+        </div>
+        <Popover
+          triggeredBy="#edHelp"
+          class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 z-20"
+          placement="right-start"
+        >
+          <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              Tertiary education attainment
+            </h3>
+            Defined as percentage of population that either completed some college
+            but not a degree, completed an associate's degree, completed a bachelor's
+            degree, or completed an advanced degree such as a professional or graduate
+            degree (ACS, 2020).  <span class='text-red-600 font-semibold'>Red mark</span> indicates national rate of tertiaty education attainment.
+          </div>
+        </Popover>
+        <div class="flex relative">
+          <div class="filterSlider flex-1">
+            <RangeSlider
+              range
+              bind:values={edBounds}
+              min={0}
+              max={70}
+              step={1}
+              pips
+              pipstep={25}
+              first={"label"}
+              last={"label"}
+              formatter={(v) => Math.round(v * 100) / 100}
+              suffix={"%"}
+              float
+              springValues={{ stiffness: 1, damping: 1 }}
+            />
+          </div>
+          <svg
+            height="25px"
+            width="180px"
+            class="absolute h-7 w-[180px] mx-[10px]"
+          >
+            <line
+              x1="{(42.2 / 70) * 100}%"
+              x2="{(42.2 / 70) * 100}%"
+              y1="60%"
+              y2="75%"
+              stroke="red"
+              stroke-width="1.5px"
+            />
+          </svg>
         </div>
       </div>
     </AccordionItem>
@@ -1130,7 +1402,6 @@ HTML
 
 {#if isGreyBackground}
   <div
-    
     class="absolute left-0 top-[50px] w-full bottom-0 bg-gray-500 opacity-50 z-[1000]"
   />
 {/if}
@@ -1138,8 +1409,6 @@ HTML
 <div id="chart-container" />
 
 <Tutorial {step} {showTutorial} />
-
-
 
 <style>
   .filterSlider {
