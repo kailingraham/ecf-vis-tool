@@ -148,7 +148,7 @@
 
 {#if showPanel}
   <div
-    class="absolute bottom-2 right-2 top-[175px] w-[420px] rounded z-10 bg-gray-100 bg-opacity-[0.675] p-2 font-default"
+    class="absolute bottom-2 right-2 w-[427px] rounded z-10 bg-gray-100 bg-opacity-[0.675] p-2 font-default"
   >
     <div class="w-full justify-between flex pt-1 px-1">
       <span class="text-2xl font-bold justify-between">
