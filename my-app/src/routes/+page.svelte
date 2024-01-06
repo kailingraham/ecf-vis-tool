@@ -147,7 +147,7 @@
     us = await d3.json(requestURLUS);
 
     const requestURLECF =
-      "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/totalECF_demo_tool.json";
+      "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/totalECF_demo.json";
     d3.json(requestURLECF).then((data) => {
       processedData = data.features.map((feature) => {
         return {
