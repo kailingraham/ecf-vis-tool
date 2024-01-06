@@ -147,7 +147,15 @@
     us = await d3.json(requestURLUS);
 
     const requestURLECF =
+      "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/totalECF_demo_tool.json";
+    const response = await d3.json(requestURLECF);
+    const requestURLECF2 =
       "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/totalECF_demo.json";
+    const response2 = await d3.json(requestURLECF2);
+
+    console.log("Original data:", response);
+    console.log("New data:", response2);
+
     d3.json(requestURLECF).then((data) => {
       processedData = data.features.map((feature) => {
         return {
@@ -177,11 +185,13 @@
       });
     });
     ecf = await d3.json(requestURLECF);
+    console.log(processedData);
+  
 
     const requestURLUSNAMES =
       "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/paul/my-app/static/uscounties.csv";
     usnames = await d3.csv(requestURLUSNAMES);
-    console.log(usnames);
+  
 
     counties = topojson.feature(us, us.objects.counties);
     counties_for_zoom = new Map(
