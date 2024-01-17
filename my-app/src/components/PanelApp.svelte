@@ -10,20 +10,23 @@
   //load socio-economic data
   let socioeconFile =
     //"https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/socioeconomic-panel/ACS/socioec_ECF.csv";
-    "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/mvp/my-app/static/socioec_ECF.csv";
+    "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/socioec_ECF.csv";
 
   //load emissions data
   let emissionsFile =
-    "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/socioeconomic-panel/ACS/emissions.csv";
-    // "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/socioec_ECF.csv";
+    // "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/socioeconomic-panel/ACS/emissions.csv";
+    
+    'https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/emissions.csv';
 
   //load employment data
   let employmentFile =
-    "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/socioeconomic-panel/ACS/employment.csv";
+    // "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/socioeconomic-panel/ACS/employment.csv";
+    'https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/employment.csv';
 
   //load employment data
   let ecfFile =
-    "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/socioeconomic-panel/ACS/ecf.csv";
+    // "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/socioeconomic-panel/ACS/ecf.csv";
+    'https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/ecf.csv';
 
   //port variables
   export let FIPScode;
@@ -52,12 +55,11 @@
     if (FIPScode) {
       emissions_data = await d3.csv(emissionsFile, function (d) {
         return {
-          industry: d.FIPS,
+          industry: d.sector,
           emissions_pct: d[FIPScode],
         };
-        console.log(emissions_data)
+      
       });
-      console.log(emissions_data)
     }
     
   }
@@ -66,7 +68,7 @@
   async function fetchEmploymentData() {
     employment_data = await d3.csv(employmentFile, function (d) {
       return {
-        industry: d.FIPS,
+        industry: d.sector,
         employment_pct: d[FIPScode],
       };
     });
@@ -75,7 +77,7 @@
   async function fetchECFData() {
     ecf_data = await d3.csv(ecfFile, function (d) {
       return {
-        scale: d.FIPS,
+        scale: d.granularity,
         ECF: d[FIPScode],
       };
     });
