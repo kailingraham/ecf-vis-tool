@@ -15,6 +15,7 @@
   //load emissions data
   let emissionsFile =
     "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/socioeconomic-panel/ACS/emissions.csv";
+    // "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/socioec_ECF.csv";
 
   //load employment data
   let employmentFile =
@@ -54,9 +55,13 @@
           industry: d.FIPS,
           emissions_pct: d[FIPScode],
         };
+        console.log(emissions_data)
       });
+      console.log(emissions_data)
     }
+    
   }
+  
 
   async function fetchEmploymentData() {
     employment_data = await d3.csv(employmentFile, function (d) {
