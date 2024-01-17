@@ -12,7 +12,6 @@
     ChevronRight,
   } from "flowbite-svelte";
 
-  let unemployment = [];
   let us;
   let counties;
   let states;
@@ -135,63 +134,49 @@
    * Load necessary files on mount
    * ----------------------------------------------------------------------------------------------------------------*/
   onMount(async () => {
-    const requestURL =
-      "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/paul/my-app/static/unemployment-x.csv";
-    unemployment = (await d3.csv(requestURL)).map((d) => ({
-      ...d,
-      ECF_log10: +d.ECF_log10,
-    }));
-
     const requestURLUS =
       "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/counties-albers-10m.json";
     us = await d3.json(requestURLUS);
 
-    // const requestURLECF =
-    //   "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/totalECF_demo_tool.json";
-    // const response = await d3.json(requestURLECF);
-    const requestURLECF2 =
-      "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/totalECF_demo_tool_OLD.json";
-    const response2 = await d3.json(requestURLECF2);
+    const requestURLECF =
+      "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/totalECF_demo_tool.json";
+    const response = await d3.json(requestURLECF);
 
-    console.log("Original data:", response);
-    console.log("New data:", response2);
+    // d3.json(requestURLECF2).then((data) => {
+    d3.json(requestURLECF).then((data) => {
+      processedData = data.features.map((feature) => {
+        return {
+          id: feature.properties.FIPS,
+          state: feature.properties.State,
+          ECF: Math.round(feature.properties.ECF * 100) / 100,
+          ECF_log10: Math.round(feature.properties.ECF_log10 * 100) / 100,
+          ECF_log10_std: feature.properties.ECF_log10_zscore,
 
-    // d3.json(requestURLECF).then((data) => {
-    //   processedData = data.features.map((feature) => {
-    //     return {
-    //       id: feature.properties.FIPS,
-    //       state: feature.properties.State,
-    //       ECF: Math.round(feature.properties.ECF * 100) / 100,
-    //       ECF_log10: Math.round(feature.properties.ECF_log10 * 100) / 100,
-    //       ECF_log10_std: feature.properties.ECF_log10_std,
-
-    //       // Add filter data specifications here
-    //       mig_percent: feature.properties.MIG_PERCENT,
-    //       inc: feature.properties.INC_IND_TOT,
-    //       min_percent: feature.properties.RACE_PERCENT_MINORITY,
-    //       rucc: +feature.properties.RUCC_2013,
-    //       ira: feature.properties.ira,
-    //       unemp: feature.properties.UNEMP_RATE,
-    //       pov: feature.properties.POV_RATE,
-    //       ed: feature.properties.ED_PERCENT_TERTIARY,
-    //       pop: feature.properties.POP,
-    //       hisp: feature.properties.ETHN_LATIN_PERCENT,
-    //       top_race: feature.properties.top_race,
-    //       top_race_percent: feature.properties.top_race_percent,
-    //       next_top_race: feature.properties.next_top_race,
-    //       next_top_race_percent: feature.properties.next_top_race_percent,
-    //       pop_log10: feature.properties.POP_log10,
-    //     };
-    //   });
-    // });
-    // ecf = await d3.json(requestURLECF);
-    // console.log(processedData);
+          // Add filter data specifications here
+          mig_percent: feature.properties.MIG_PERCENT,
+          inc: feature.properties.INC_IND_TOT,
+          min_percent: feature.properties.RACE_PERCENT_MINORITY,
+          rucc: +feature.properties.RUCC_2013,
+          ira: feature.properties.ira,
+          unemp: feature.properties.UNEMP_RATE,
+          pov: feature.properties.POV_RATE,
+          ed: feature.properties.ED_PERCENT_TERTIARY,
+          pop: feature.properties.POP,
+          hisp: feature.properties.ETHN_LATIN_PERCENT,
+          top_race: feature.properties.top_race,
+          top_race_percent: feature.properties.top_race_percent,
+          next_top_race: feature.properties.next_top_race,
+          next_top_race_percent: feature.properties.next_top_race_percent,
+          pop_log10: feature.properties.POP_log10,
+        };
+      });
+    });
+    ecf = await d3.json(requestURLECF);
   
 
     const requestURLUSNAMES =
-      "https://raw.githubusercontent.com/paulsizaire/paulsizaire.github.io/paul/my-app/static/uscounties.csv";
-    usnames = await d3.csv(requestURLUSNAMES);
-  
+      "https://raw.githubusercontent.com/kailingraham/ecf-vis-tool/main/my-app/static/uscounties.csv";
+    usnames = await d3.csv(requestURLUSNAMES);  
 
     counties = topojson.feature(us, us.objects.counties);
     counties_for_zoom = new Map(
@@ -201,7 +186,6 @@
     counties_fips = new Map(counties.features.map((d) => [d.id, d]));
 
     states = topojson.feature(us, us.objects.states);
-
     statemap = new Map(states.features.map((d) => [d.properties.name, d]));
     stateNames = Array.from(statemap.keys());
 
