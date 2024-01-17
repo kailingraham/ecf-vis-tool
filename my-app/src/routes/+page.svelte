@@ -735,7 +735,7 @@
       domain: [0.253002, 0.946957, 1.303415, 1.574287, 3.306079],
       range: ["#006193", "#70a8ca", "#e0e0e0", "#dcab77", "#a12e00"],
       title: (f, d) =>
-        `${f.properties.name}, ${d?.state} \n ${d?.ECF} tons CO2/employee`,
+        `${f.properties.name}, ${d?.state} \n ${d?.ECF} metric tonnes CO2/employee`,
       features: counties,
       borders: statemesh,
       width: window.innerWidth,
@@ -1389,7 +1389,7 @@ HTML
   class="fixed top-[60px] right-2 bg-gray-100 p-1 font-default z-10 bg-opacity-[0.675] rounded"
 >
   <h1 class="text-center text-sm font-bold space-y-0">
-    Employee Carbon Footprint (ECF)<br />(tons CO<sub>2</sub>e per employee)
+    Employee Carbon Footprint (ECF)<br />(metric tonnes CO<sub>2</sub>e per employee)
   </h1>
   <div id="legendContainer" class="top-0 m-0" />
 </div>

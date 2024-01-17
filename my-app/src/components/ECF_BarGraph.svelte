@@ -32,8 +32,6 @@
     { scale: "State avg", color: "gray" },
     { scale: "U.S. avg", color: "gray" },
   ];
-
-  console.log(ecf_data);
 </script>
 
 <div class="visualization">
@@ -111,8 +109,8 @@
       />
     </g>
     <!-- add y-axis ECF label -->
-    <text class="-rotate-90" x={-height / 2} y={10} text-anchor="middle">
-      ECF (tons CO<sub>2</sub>e/employee)
+    <text class="-rotate-90" x={-height / 2 +6} y={10} text-anchor="middle">
+      ECF (tonnes CO2e/employee)
     </text>
   </svg>
 </div>

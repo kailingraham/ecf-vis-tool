@@ -169,7 +169,7 @@
       </button>
     </div>
     <div class="text-base pb-1 px-1">
-      {countyOtherData.ECF} tons CO<sub>2</sub>e/employee
+      {countyOtherData.ECF} metric tonnes CO<sub>2</sub>e/employee
     </div>
     <div class="text-base p-1">
       {#if countyOtherData.ira === 1}
