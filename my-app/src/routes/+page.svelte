@@ -157,7 +157,7 @@
           inc: feature.properties.INC_IND_TOT,
           min_percent: feature.properties.RACE_PERCENT_MINORITY,
           rucc: +feature.properties.RUCC_2013,
-          ira: feature.properties.ira,
+          ira: feature.properties.ec,
           unemp: feature.properties.UNEMP_RATE,
           pov: feature.properties.POV_RATE,
           ed: feature.properties.ED_PERCENT_TERTIARY,
