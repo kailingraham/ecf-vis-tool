@@ -21,7 +21,7 @@
     >
       <div class="bg-white p-4 font-default rounded-md">
         <h2 class="mb-2 font-bold text-lg text-center">
-          Identifying vulnerable communities through employee carbon footprints
+          Identifying vulnerable communities through employment carbon footprints
         </h2>
         <p class="text-sm mb-2 text-justify">
           The energy transition is disrupting the U.S. economy and workforce,
@@ -34,7 +34,7 @@
           understand how economic, and specifically employment, impacts of the
           energy transition are likely to be distributed across the United
           States. We measure this by calculating the average carbon emissions
-          per employee (the "employee carbon footprint", or ECF) of every U.S.
+          per employee (the "employment carbon footprint", or ECF) of every U.S.
           county.
         </p>
         <p class="text-sm mb-2 text-justify">
@@ -64,7 +64,7 @@
       class="  bg-white fixed top-[170px] p-3 w-[340px] right-2 z-10 rounded border border-1 border-blue-500"
     >
       <p class="text-sm text-justify font-default mb-2 leading-[18px]">
-        The <b>employee carbon footprint</b> (ECF) is a metric that assesses how
+        The <b>employment carbon footprint</b> (ECF) is a metric that assesses how
         reliant employment in a community is on CO<sub>2</sub>-producing fossil
         fuels, and therefore how exposed these communities are to economic
         shocks in a future without them. Counties in orange have above-average
@@ -133,7 +133,7 @@
       class="bg-white fixed bottom-2 p-3 w-[300px] right-2 z-10 rounded border border-1 border-blue-500"
     >
       <p class="text-sm text-justify font-default mb-2 leading-[18px]">
-        Employee carbon footprints are not distributed evenly, and it is
+        Employment carbon footprints are not distributed evenly, and it is
         important to understand how employment vulnerability intersects with
         other socioeconomic and demographic factors.
       </p>

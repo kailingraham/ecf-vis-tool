@@ -1389,7 +1389,7 @@ HTML
   class="fixed top-[60px] right-2 bg-gray-100 p-1 font-default z-10 bg-opacity-[0.675] rounded"
 >
   <h1 class="text-center text-sm font-bold space-y-0">
-    Employee Carbon Footprint (ECF)<br />(metric tonnes CO<sub>2</sub>e per employee)
+    Employment Carbon Footprint (ECF)<br />(metric tonnes CO<sub>2</sub>e per employee)
   </h1>
   <div id="legendContainer" class="top-0 m-0" />
 </div>
