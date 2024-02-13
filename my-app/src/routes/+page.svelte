@@ -50,11 +50,11 @@
   let showTutorial = true;
   let isGreyBackground = true;
 
-  function hideGreyBackground() {
-    isGreyBackground = false;
+  function toggleGreyBackground() {
+    isGreyBackground = !isGreyBackground;
   }
-  setContext("hideGreyBackground", () => {
-    hideGreyBackground();
+  setContext("toggleGreyBackground", () => {
+    toggleGreyBackground();
   });
 
   async function handleNextStep() {

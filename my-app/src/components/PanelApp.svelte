@@ -1,5 +1,4 @@
 <script>
-  import Box from "./Box.svelte";
   import * as d3 from "d3";
   import EmploymentGraph from "./EmploymentGraph.svelte";
   import EmissionsGraph from "./EmissionsGraph.svelte";

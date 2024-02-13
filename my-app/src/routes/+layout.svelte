@@ -1,21 +1,25 @@
 <script>
   import "../app.css";
-  import { Modals, closeModal } from "svelte-modals";
+  import { getContext } from "svelte";
+
+  let hideGreyBackground = getContext("hideGreyBackground");
+
 </script>
 
 <nav class="flex min-h-[50px] items-center bg-white">
-  <div class="w-1/5 flex" />
+  <div class="w-1/5 flex justify-start">
+    <img
+      src="MIT-CEEPR-logo-clr-for-light-background.png"
+      alt="ceepr_logo"
+      class="pl-2 h-10 max-h-full max-w-full w-auto object-contain"
+    />
+  </div>
   <div class="flex flex-grow items-center justify-center">
     <h1 class="text-2xl font-bold font-default text-center">
       Employment Vulnerability to the Energy Transition (E-VET) tool
     </h1>
   </div>
-  <div class="w-1/5 flex justify-end">
-    <img
-      src="MIT-CEEPR-logo-clr-for-light-background.png"
-      alt="ceepr_logo"
-      class="h-10 max-h-full max-w-full w-auto object-contain"
-    />
+  <div class="w-1/5 justify-end flex">
   </div>
 </nav>
 

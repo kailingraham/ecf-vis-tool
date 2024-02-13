@@ -1,17 +1,107 @@
 <script>
   import { getContext } from "svelte";
+  import { XCircleIcon } from "svelte-feather-icons";
 
   export let step;
   export let showTutorial;
 
-  let hideGreyBackground = getContext("hideGreyBackground");
+  let toggleGreyBackground = getContext("toggleGreyBackground");
   let resetTutorial = getContext("resetTutorial");
   let handleNextStep = getContext("handleNextStep");
+
+  let showMoreInfo = false;
 
   function closeTutorial() {
     showTutorial = false;
   }
+
+  function toggleMoreInfo() {
+    showMoreInfo = !showMoreInfo;
+    if (!showTutorial) {
+      toggleGreyBackground();
+    }
+  }
 </script>
+
+<div class="top-[10px] right-2 fixed">
+  <button
+    class="bg-white border border-gray-400 hover:bg-gray-200 text-gray-400 text-xs py-0 px-1 rounded font-default"
+    on:click={() => {
+      toggleMoreInfo();
+      closeTutorial();
+    }}>More about E-VET</button
+  >
+</div>
+
+{#if showMoreInfo}
+  <div
+    role="dialog"
+    class="modal1 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-center items-center z-50"
+  >
+    <div class="bg-white p-4 pt-3 font-default rounded-md">
+      <div class="w-full flex">
+        <h2 class="font-bold text-lg text-center justify-center flex-grow">
+          More about E-VET
+        </h2>
+        <button class="" on:click={toggleMoreInfo}>
+          <XCircleIcon />
+        </button>
+      </div>
+
+      <p
+        class="text-sm my-2 text-justify"
+        xmlns:cc="http://creativecommons.org/ns#"
+      >
+        This tool was developed by Kailin Graham, Serena Patel and Paul Sizaire,
+        and is licensed under Creative Commons
+        <a
+          href="http://creativecommons.org/licenses/by-nc/4.0/?ref=chooser-v1"
+          target="_blank"
+          rel="license noopener noreferrer"
+          style="display:inline-block;text-decoration:underline;"
+          >Attribution-NonCommercial 4.0 International</a
+        > (CC BY-NC). Use of this tool, and the data it contains, should be cited
+        as follows:
+      </p>
+      <p class="text-xs mb-2 px-4 text-left">
+        Graham, K., & Knittel, C. R. (2024). Assessing the distribution of
+        employment vulnerability to the energy transition using employment
+        carbon footprints. <i
+          >Proceedings of the National Academy of Sciences, 121(7)</i
+        >.
+        <a
+          href="https://www.pnas.org/doi/10.1073/pnas.2314773121"
+          class="text-blue-500"
+          target="_blank">doi.org/10.1073/pnas.2314773121</a
+        >
+      </p>
+      <p class="text-sm mb-2 text-justify">
+        Employment carbon footprints were derived by Graham & Knittel (2024)
+        according to the methodology described in the paper above. Demographic
+        data were obtained from the U.S. Census Bureau's American Community
+        Survey. Data on energy communities were obtained from the
+        Interagency Working Group on Coal & Power Plant Communities & Economic
+        Revitalization <a
+          href="https://energycommunities.gov/energy-community-tax-credit-bonus-faqs/"
+          class="text-blue-500">website</a
+        >.
+      </p>
+      <p class="text-sm mb-2 text-justify">
+        Raw employment carbon footprint data is publicly available via <a
+          href="https://github.com/kailingraham/GrahamKnittel_EmploymentCarbonFootprints_Data"
+          class="text-blue-500"
+          target="_blank">online Github repository</a
+        >.
+      </p>
+      <p class="text-sm mb-2 text-justify">
+        For questions, bug reports or other information, please reach out to
+        CEEPR at <a href="mailto: ceepr@mit.edu" class="text-blue-500"
+          >ceepr@mit.edu</a
+        >.
+      </p>
+    </div>
+  </div>
+{/if}
 
 {#if showTutorial}
   {#if step === 0}
@@ -21,7 +111,8 @@
     >
       <div class="bg-white p-4 font-default rounded-md">
         <h2 class="mb-2 font-bold text-lg text-center">
-          Identifying vulnerable communities through employment carbon footprints
+          Identifying vulnerable communities through employment carbon
+          footprints
         </h2>
         <p class="text-sm mb-2 text-justify">
           The energy transition is disrupting the U.S. economy and workforce,
@@ -29,37 +120,46 @@
           of economic displacement and job losses.
         </p>
         <p class="text-sm mb-2 text-justify">
-          This tool, developed by MIT's Center for Energy & Environmental Policy
-          Research, allows policymakers, researchers, and communities to
-          understand how economic, and specifically employment, impacts of the
-          energy transition are likely to be distributed across the United
-          States. We measure this by calculating the average carbon emissions
-          per employee (the "employment carbon footprint", or ECF) of every U.S.
-          county.
+          This tool, developed by MIT's <a
+            href="https://ceepr.mit.edu/"
+            class="text-blue-500"
+          >
+            Center for Energy & Environmental Policy Research</a
+          >, allows policymakers, researchers, and communities to understand how
+          economic, and specifically employment, impacts of the energy
+          transition are likely to be distributed across the United States. We
+          measure this by calculating the average carbon emissions per employee
+          (the "employment carbon footprint", or ECF) of every U.S. county.
         </p>
         <p class="text-sm mb-2 text-justify">
           Click "Start tutorial" to be guided through the features of the tool,
           or "Close" to start exploring.
         </p>
         <p class="text-gray-500 text-xs mb-2 text-justify">
-          This tool complements the work in Graham, K., & Knittel, C. R. (2024). 
-          Assessing the distribution of employment vulnerability to the energy transition 
-          using employment carbon footprints. <i>Proceedings of the National Academy of Sciences,
-          121(7)</i>. <a href="https://www.pnas.org/doi/10.1073/pnas.2314773121" class='text-blue-500' target="_blank">doi.org/10.1073/pnas.2314773121</a>. See the paper for methodology and key results.
+          This tool complements the work in Graham, K., & Knittel, C. R. (2024).
+          Assessing the distribution of employment vulnerability to the energy
+          transition using employment carbon footprints. <i
+            >Proceedings of the National Academy of Sciences, 121(7)</i
+          >.
+          <a
+            href="https://www.pnas.org/doi/10.1073/pnas.2314773121"
+            class="text-blue-500"
+            target="_blank">doi.org/10.1073/pnas.2314773121</a
+          >. See the paper for methodology and key results.
         </p>
         <div class="flex mx-auto justify-center gap-2">
           <button
             class="bg-blue-500 hover:bg-blue-700 text-white text-sm py-1 px-3 rounded font-default"
             on:click={() => {
               handleNextStep();
-              hideGreyBackground();
+              toggleGreyBackground();
             }}>Start tutorial</button
           >
           <button
             class="bg-white hover:bg-blue-700 hover:text-white text-blue-700 border border-blue-500 text-sm py-1 px-8 rounded font-default"
             on:click={() => {
               closeTutorial();
-              hideGreyBackground();
+              toggleGreyBackground();
             }}>Close</button
           >
         </div>
@@ -70,11 +170,12 @@
       class="  bg-white fixed top-[170px] p-3 w-[340px] right-2 z-10 rounded border border-1 border-blue-500"
     >
       <p class="text-sm text-justify font-default mb-2 leading-[18px]">
-        The <b>employment carbon footprint</b> (ECF) is a metric that assesses how
-        reliant employment in a community is on CO<sub>2</sub>-producing fossil
-        fuels, and therefore how exposed these communities are to economic
-        shocks in a future without them. Counties in orange have above-average
-        ECFs, and those in blue have ECFs below the national average.
+        The <b>employment carbon footprint</b> (ECF) is a metric that assesses
+        how reliant employment in a community is on CO<sub>2</sub>-producing
+        fossil fuels, and therefore how exposed these communities are to
+        economic shocks in a future without them. Counties in orange have
+        above-average ECFs, and those in blue have ECFs below the national
+        average.
       </p>
       <div class="flex mx-auto justify-center gap-2">
         <button
@@ -164,22 +265,27 @@
     </div>
   {:else if step === 5}
     <div
-      class="bg-white fixed top-[280px] p-3 w-[300px] left-2 z-10 rounded border border-1 border-blue-500"
+      class="bg-white fixed bottom-[10px] p-3 w-[300px] left-2 z-10 rounded border border-1 border-blue-500"
     >
       <p class="text-sm text-justify font-default mb-2 leading-[18px]">
-        Click on a county (or select it using the Search box) to bring up the <b>data panel</b>.
+        Click on a county (or select it using the Search box) to bring up the <b
+          >data panel</b
+        >.
       </p>
       <p class="text-sm text-justify font-default mb-2 leading-[18px]">
-        Supplementary data includes socioeconomic and demographic data (e.g. median income, poverty rate, 
-        minority population share), a comparison of the county's ECF to the state and national averages, and 
-        data on the share of the county's employment and emissions attributable to different sectors.
+        Supplementary data includes socioeconomic and demographic data (e.g.
+        median income, poverty rate, minority population share), a comparison of
+        the county's ECF to the state and national averages, and data on the
+        share of the county's employment and emissions attributable to different
+        sectors.
       </p>
       <p class="text-sm text-justify font-default mb-2 leading-[18px]">
-        Feel free to click around different counties and states to compare their data.
+        Feel free to click around different counties and states to compare their
+        data.
       </p>
-      <p class="text-xs text-justify font-default mb-2 leading-4">
-        [Note that the "commercial" sector refers to any activity in a commercial building, including offices,
-        restaurants, schools, hospitals, etc.]
+      <p class="text-xs text-justify font-default mb-2 leading-4 text-gray-500">
+        "Commercial" refers to any activity in a commercial building, including
+        offices, restaurants, schools, hospitals, etc.
       </p>
       <div class="flex mx-auto justify-center gap-2">
         <button
@@ -187,7 +293,6 @@
           on:click={resetTutorial}
           >Exit tutorial
         </button>
-        
       </div>
     </div>
   {/if}
@@ -204,5 +309,4 @@
     align-items: center;
     z-index: 1000;
   }
-
 </style>
