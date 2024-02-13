@@ -15,17 +15,17 @@
     <link rel="icon" href="https://kailingraham.github.io/ecf-vis-tool/CEEPR_favicon.png" />
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="content-security-policy" content="">
-		<link href="./_app/immutable/assets/_layout.af8238a7.css" rel="stylesheet">
-		<link href="./_app/immutable/assets/_page.81e1fba7.css" rel="stylesheet">
-		<link rel="modulepreload" href="./_app/immutable/entry/start.9b5b1516.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index.78f074a8.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.b23411ac.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index.50c8e779.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.7b5672e4.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.e4d7c74c.js">
+		<link href="./_app/immutable/assets/_layout.f5665626.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/_page.25ebdadb.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.d8883d9f.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.58b971ef.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.17937e08.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.b821490b.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.7f9bfb3e.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.17e94928.js">
 		<link rel="modulepreload" href="./_app/immutable/entry/_layout.js.984db11e.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/_layout.da46b06b.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.a15aaffe.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.9a71076f.js">
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.14.0/mapbox-gl.css"
       rel="stylesheet"
@@ -46,10 +46,10 @@
     <div style="display: contents">
 
 
-<nav class="flex min-h-[50px] items-center bg-white"><div class="w-1/5 flex"></div>
+<nav class="flex min-h-[50px] items-center bg-white"><div class="w-1/5 flex justify-start"><img src="MIT-CEEPR-logo-clr-for-light-background.png" alt="ceepr_logo" class="pl-2 h-10 max-h-full max-w-full w-auto object-contain"></div>
   <div class="flex flex-grow items-center justify-center"><h1 class="text-2xl font-bold font-default text-center">Employment Vulnerability to the Energy Transition (E-VET) tool
     </h1></div>
-  <div class="w-1/5 flex justify-end"><img src="MIT-CEEPR-logo-clr-for-light-background.png" alt="ceepr_logo" class="h-10 max-h-full max-w-full w-auto object-contain"></div></nav>
+  <div class="w-1/5 justify-end flex"></div></nav>
 
 
 
@@ -94,27 +94,30 @@
 
 <div id="chart-container" class="svelte-yo5m97"></div>
 
-<div role="dialog" class="modal1 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-center items-center z-50 svelte-kipgcs"><div class="bg-white p-4 font-default rounded-md"><h2 class="mb-2 font-bold text-lg text-center">Identifying vulnerable communities through employment carbon footprints
+<div class="top-[10px] right-2 fixed"><button class="bg-white border border-gray-400 hover:bg-gray-200 text-gray-400 text-xs py-0 px-1 rounded font-default">More about E-VET</button></div>
+
+
+
+<div role="dialog" class="modal1 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-center items-center z-50 svelte-4ns09k"><div class="bg-white p-4 font-default rounded-md"><h2 class="mb-2 font-bold text-lg text-center">Identifying vulnerable communities through employment carbon
+          footprints
         </h2>
         <p class="text-sm mb-2 text-justify">The energy transition is disrupting the U.S. economy and workforce,
           placing communities that depend on carbon-intensive industries at risk
           of economic displacement and job losses.
         </p>
-        <p class="text-sm mb-2 text-justify">This tool, developed by MIT&#39;s Center for Energy &amp; Environmental Policy
-          Research, allows policymakers, researchers, and communities to
-          understand how economic, and specifically employment, impacts of the
-          energy transition are likely to be distributed across the United
-          States. We measure this by calculating the average carbon emissions
-          per employee (the &quot;employment carbon footprint&quot;, or ECF) of every U.S.
-          county.
+        <p class="text-sm mb-2 text-justify">This tool, developed by MIT&#39;s <a href="https://ceepr.mit.edu/" class="text-blue-500">Center for Energy &amp; Environmental Policy Research</a>, allows policymakers, researchers, and communities to understand how
+          economic, and specifically employment, impacts of the energy
+          transition are likely to be distributed across the United States. We
+          measure this by calculating the average carbon emissions per employee
+          (the &quot;employment carbon footprint&quot;, or ECF) of every U.S. county.
         </p>
         <p class="text-sm mb-2 text-justify">Click &quot;Start tutorial&quot; to be guided through the features of the tool,
           or &quot;Close&quot; to start exploring.
         </p>
-        <p class="text-gray-500 text-xs mb-2 text-justify">This tool complements the work in Graham, K., &amp; Knittel, C. R. (2024). 
-          Assessing the distribution of employment vulnerability to the energy transition 
-          using employment carbon footprints. <i>Proceedings of the National Academy of Sciences,
-          121(7)</i>. <a href="https://www.pnas.org/doi/10.1073/pnas.2314773121" class="text-blue-500" target="_blank">doi.org/10.1073/pnas.2314773121</a>. See the paper for methodology and key results.
+        <p class="text-gray-500 text-xs mb-2 text-justify">This tool complements the work in Graham, K., &amp; Knittel, C. R. (2024).
+          Assessing the distribution of employment vulnerability to the energy
+          transition using employment carbon footprints. <i>Proceedings of the National Academy of Sciences, 121(7)</i>.
+          <a href="https://www.pnas.org/doi/10.1073/pnas.2314773121" class="text-blue-500" target="_blank">doi.org/10.1073/pnas.2314773121</a>. See the paper for methodology and key results.
         </p>
         <div class="flex mx-auto justify-center gap-2"><button class="bg-blue-500 hover:bg-blue-700 text-white text-sm py-1 px-3 rounded font-default">Start tutorial</button>
           <button class="bg-white hover:bg-blue-700 hover:text-white text-blue-700 border border-blue-500 text-sm py-1 px-8 rounded font-default">Close</button></div></div></div>
@@ -130,7 +133,7 @@
 			
 			<script>
 				{
-					__sveltekit_boref2 = {
+					__sveltekit_1kzz4gu = {
 						env: {},
 						base: new URL(".", location).pathname.slice(0, -1),
 						element: document.currentScript.parentElement
@@ -139,10 +142,10 @@
 					const data = [null,null];
 
 					Promise.all([
-						import("./_app/immutable/entry/start.9b5b1516.js"),
-						import("./_app/immutable/entry/app.7b5672e4.js")
+						import("./_app/immutable/entry/start.d8883d9f.js"),
+						import("./_app/immutable/entry/app.7f9bfb3e.js")
 					]).then(([kit, app]) => {
-						kit.start(app, __sveltekit_boref2.element, {
+						kit.start(app, __sveltekit_1kzz4gu.element, {
 							node_ids: [0, 2],
 							data,
 							form: null,
