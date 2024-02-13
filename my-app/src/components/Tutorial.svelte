@@ -45,7 +45,7 @@
           This tool complements the work in Graham, K., & Knittel, C. R. (2024). 
           Assessing the distribution of employment vulnerability to the energy transition 
           using employment carbon footprints. <i>Proceedings of the National Academy of Sciences,
-          121(7)</i>. <a href="doi.org/10.1073/pnas.2314773121" class='text-blue-500' target="_blank">doi.org/10.1073/pnas.2314773121</a>. See the paper for methodology and key results.
+          121(7)</i>. <a href="https://www.pnas.org/doi/10.1073/pnas.2314773121" class='text-blue-500' target="_blank">doi.org/10.1073/pnas.2314773121</a>. See the paper for methodology and key results.
         </p>
         <div class="flex mx-auto justify-center gap-2">
           <button
@@ -215,7 +215,7 @@
     align-items: center;
 
     /* allow click-through to backdrop */
-    pointer-events: none;
+    pointer-events: none;x``
     font-family: "Cardo", serif;
   }
 
