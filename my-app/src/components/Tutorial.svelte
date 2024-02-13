@@ -205,29 +205,4 @@
     z-index: 1000;
   }
 
-  .modal2 {
-    position: absolute;
-    top: 50px;
-    left: 300px;
-    width: 300px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    /* allow click-through to backdrop */
-    pointer-events: none;x``
-    font-family: "Cardo", serif;
-  }
-
-  .contents {
-    min-width: 240px;
-    border-radius: 6px;
-    padding: 16px;
-    background: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    pointer-events: auto;
-    font-family: "Cardo", serif;
-  }
 </style>
